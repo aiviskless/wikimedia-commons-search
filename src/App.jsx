@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import React, { Children, useEffect, useState } from 'react';
 
 class SPARQLQueryDispatcher {
   constructor(endpoint) {
@@ -27,10 +27,10 @@ function App() {
     select ?colorName ?image with {
       select ?color (iri(replace(str(sample(?photo)), "^.*/", str(commons:))) as ?image) where {
         [a schema:ImageObject] schema:contentUrl ?photo;
-                               p:P180 [
-                                 ps:P180 wd:Q102231;
-                                 pq:P462 ?color
-                               ].
+                                p:P180 [
+                                  ps:P180 wd:Q102231;
+                                  pq:P462 ?color
+                                ].
       }
       group by ?color
     } as %roses where {
@@ -52,7 +52,13 @@ function App() {
   return (
     <div className="App">
       {images.length ? (
-        images.map((img, i) => <img key={i} src={img} alt="" style={{ width: 300, height: 'auto', margin: 10 }} />)
+        Children.toArray(images.map((img) => (
+          <img
+            src={img}
+            alt=""
+            style={{ width: 300, height: 'auto', margin: 10 }}
+          />
+        )))
       ) : <h1>No images</h1>}
     </div>
   );
