@@ -1,67 +1,149 @@
 import './App.css';
-import React, { Children, useEffect, useState } from 'react';
+import React, { Children, useRef, useState } from 'react';
+import WBK from 'wikibase-sdk';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { Box, CircularProgress } from '@material-ui/core';
+import Pagination from '@material-ui/lab/Pagination';
+import SPARQLQueryDispatcher from './SPARQLQueryDispatcher';
+import SearchResultOption from './components/SearchResultOption';
+import MediaBox from './components/MediaBox';
 
-class SPARQLQueryDispatcher {
-  constructor(endpoint) {
-    this.endpoint = endpoint;
-  }
-
-  query(sparqlQuery) {
-    const fullUrl = `${this.endpoint}?query=${encodeURIComponent(sparqlQuery)}`;
-    const headers = { Accept: 'application/sparql-results+json' };
-
-    return fetch(fullUrl, { headers }).then((body) => body.json());
-  }
-}
+const TIMEOUT_FOR_SEARCH = 500;
+const MEDIA_LIMIT = 100;
+const MEDIA_LIMIT_IN_PAGE = 8;
 
 function App() {
-  const [images, setImages] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [inputSearchResults, setInputSearchResults] = useState([]);
+  const [entityMediaResults, setEntityMediaResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const [page, setPage] = useState(1);
+
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+
+  const timer = useRef(null);
+
+  const wdk = WBK({
+    instance: 'https://www.wikidata.org',
+    sparqlEndpoint: 'https://query.wikidata.org/sparql',
+  });
+
+  const handleOnChange = (e) => {
+    setInputValue(e.target.value);
+
+    if (e?.target?.value?.length < 2) return false;
+
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+
+    timer.current = setTimeout(() => {
+      setLoading(true);
+      const url = wdk.searchEntities(inputValue);
+
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          setInputSearchResults(data.search);
+          setLoading(false);
+        });
+    }, TIMEOUT_FOR_SEARCH);
+
+    return true;
+  };
+
+  const handleOnClick = (id) => {
+    setEntityMediaResults([]);
+    setPage(1);
+
     const endpointUrl = 'https://wcqs-beta.wmflabs.org/sparql';
-    const sparqlQuery = `#colors of roses
-    #defaultView:ImageGrid
-    
-    prefix commons: <http://commons.wikimedia.org/wiki/Special:FilePath/>
-    
-    select ?colorName ?image with {
-      select ?color (iri(replace(str(sample(?photo)), "^.*/", str(commons:))) as ?image) where {
-        [a schema:ImageObject] schema:contentUrl ?photo;
-                                p:P180 [
-                                  ps:P180 wd:Q102231;
-                                  pq:P462 ?color
-                                ].
-      }
-      group by ?color
-    } as %roses where {
-      include %roses.
-    
-      service <https://query.wikidata.org/sparql> {
-        service wikibase:label {
-          bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
-          ?color rdfs:label ?colorName.
-        }
-      }
-    }`;
+
+    const sparqlQuery = `
+    SELECT ?file ?image WHERE {
+      ?file wdt:P180 wd:${id} .
+      ?file schema:contentUrl ?url .
+      bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)))) AS ?image)
+    } limit ${MEDIA_LIMIT}`;
 
     const queryDispatcher = new SPARQLQueryDispatcher(endpointUrl);
-    queryDispatcher.query(sparqlQuery)
-      .then(({ results }) => setImages(results.bindings.map((bind) => bind.image.value)));
-  }, []);
+
+    queryDispatcher.query(sparqlQuery).then((data) => setEntityMediaResults(data.results.bindings));
+  };
+
+  console.log(entityMediaResults, 'entityMediaResults');
+
+  const indexOfLastTodo = page * MEDIA_LIMIT_IN_PAGE;
+  const indexOfFirstTodo = indexOfLastTodo - MEDIA_LIMIT_IN_PAGE;
 
   return (
     <div className="App">
-      {images.length ? (
-        Children.toArray(images.map((img) => (
-          <img
-            src={img}
-            alt=""
-            style={{ width: 300, height: 'auto', margin: 10 }}
-          />
-        )))
-      ) : <h1>No images</h1>}
+      <Box width={500}>
+        <Autocomplete
+          freeSolo
+          options={[...inputSearchResults]}
+          renderOption={(option) => (
+            <SearchResultOption onClick={() => handleOnClick(option.id)} option={option} />
+          )}
+          getOptionLabel={(option) => option.label}
+          loading={loading}
+          filterOptions={(x) => x}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              onChange={handleOnChange}
+              value={inputValue}
+              label="Search Wikimedia Commons"
+              margin="normal"
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
+            />
+          )}
+        />
+      </Box>
+
+      {entityMediaResults.length && (
+        <Box display="flex" flexWrap="wrap" justifyContent="center">
+          {Children.toArray(
+            entityMediaResults.slice(indexOfFirstTodo, indexOfLastTodo).map((result) => (
+              <MediaBox data={result} />
+            )),
+          )}
+        </Box>
+      )}
+
+      {entityMediaResults.length && (
+        <Pagination
+          count={Math.ceil(entityMediaResults.length / MEDIA_LIMIT_IN_PAGE)}
+          page={page}
+          onChange={handleChange}
+          size="large"
+        />
+      )}
     </div>
   );
 }
 
 export default App;
+
+// useEffect(() => {
+//   // WIKIMEDIA API THINGY
+//   const url = 'https://api.wikimedia.org/feed/v1/wikipedia/en/featured/2021/04/02';
+//   fetch(url, {
+//     headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+//   })
+//     .then((response) => response.json())
+//     .then(console.log);
+
+// }, []);
