@@ -3,7 +3,7 @@ import React, { Children, useRef, useState } from 'react';
 import WBK from 'wikibase-sdk';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Box, CircularProgress } from '@material-ui/core';
+import { Box, CircularProgress, Typography } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 import SPARQLQueryDispatcher from './utils/SPARQLQueryDispatcher';
 import SearchResultOption from './components/SearchResultOption';
@@ -17,6 +17,7 @@ function App() {
   const [inputSearchResults, setInputSearchResults] = useState([]);
   const [entityMediaResults, setEntityMediaResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [noResults, setNoResults] = useState(false);
 
   const [page, setPage] = useState(1);
 
@@ -71,7 +72,15 @@ function App() {
 
     const queryDispatcher = new SPARQLQueryDispatcher(WCQS_ENDPOINT);
 
-    queryDispatcher.query(sparqlQuery).then((data) => setEntityMediaResults(data.results.bindings));
+    queryDispatcher.query(sparqlQuery).then((data) => {
+      setEntityMediaResults(data.results.bindings);
+
+      if (data.results.bindings.length === 0) {
+        setNoResults(true);
+      } else {
+        setNoResults(false);
+      }
+    });
   };
 
   console.log(entityMediaResults, 'entityMediaResults');
@@ -113,7 +122,7 @@ function App() {
         />
       </Box>
 
-      {entityMediaResults.length && (
+      {entityMediaResults.length > 0 && (
         <Box display="flex" flexWrap="wrap" justifyContent="center">
           {Children.toArray(
             entityMediaResults.slice(indexOfFirstTodo, indexOfLastTodo).map((result) => (
@@ -123,7 +132,9 @@ function App() {
         </Box>
       )}
 
-      {entityMediaResults.length && (
+      {noResults && <Typography>No results...</Typography>}
+
+      {entityMediaResults.length > 0 && (
         <Pagination
           count={Math.ceil(entityMediaResults.length / MEDIA_LIMIT_IN_PAGE)}
           page={page}

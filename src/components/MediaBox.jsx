@@ -30,16 +30,25 @@ const useStyles = makeStyles({
     width: 'fit-content',
     height: 'fit-content',
     margin: 16,
+
+    '& .MuiCardContent-root': {
+      padding: 8,
+    },
+
+    '& .MuiCardActions-root': {
+      padding: 4,
+    },
   },
 
   title: {
     maxWidth: 'fit-content',
     wordBreak: 'break-all',
+    fontSize: 14,
   },
 
   media: {
     textAlign: 'center',
-    height: 255,
+    height: 150,
 
     '& img': {
       height: '100%',
@@ -73,19 +82,14 @@ const MediaBox = ({ data: { image, fileLabel, file } }) => {
         />
       </div>
       <CardContent>
-        <Typography
-          gutterBottom
-          component="p"
-          className={classes.title}
-        >
+        <Typography className={classes.title} gutterBottom>
           {formatTitle(getImageFilenameFromWDCFilePath(image.value))}
         </Typography>
 
         {fileLabel?.['xml:lang'] && (
           <Typography
-            variant="body2"
+            variant="caption"
             color="textSecondary"
-            component="p"
             className={classes.desc}
           >
             {formatDesc(fileLabel.value)}
