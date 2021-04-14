@@ -1,40 +1,109 @@
 import React from 'react';
 import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { Box } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
+import ModalImage from 'react-modal-image';
 
-const MediaBox = ({ data }) => (
-  <Box width={375} m={2}>
-    <Card>
-      <CardActionArea>
-        <CardMedia
-          component="img"
-          alt={data.file.value}
-          height="225"
-          image={data.image.value}
-          title="Temporary title"
+const getFullsizeImage = (url) => url.split('?width')[0];
+
+const getImageFilenameFromWDCFilePath = (url) => {
+  const splitUrl = url.split('/');
+
+  return getFullsizeImage(splitUrl[splitUrl.length - 1]);
+};
+
+const formatTitle = (title) => {
+  if (title.length > 50) return `${title.substr(0, 50)}...`;
+  return title;
+};
+
+const formatDesc = (desc) => {
+  if (desc.length > 150) return `${desc.substr(0, 50)}...`;
+  return desc;
+};
+
+const useStyles = makeStyles({
+  root: {
+    width: 'fit-content',
+    height: 'fit-content',
+    margin: 16,
+  },
+
+  title: {
+    maxWidth: 'fit-content',
+    wordBreak: 'break-all',
+  },
+
+  media: {
+    textAlign: 'center',
+    height: 255,
+
+    '& img': {
+      height: '100%',
+      width: 'auto',
+    },
+
+    '& img:hover': {
+      cursor: 'zoom-in !important',
+    },
+
+    '& div:first-child': {
+      height: '100%',
+    },
+  },
+
+  desc: {
+    maxWidth: 'fit-content',
+  },
+});
+
+const MediaBox = ({ data: { image, fileLabel, file } }) => {
+  const classes = useStyles();
+
+  return (
+    <Card className={classes.root}>
+      <div className={classes.media}>
+        <ModalImage
+          small={image.value}
+          large={getFullsizeImage(image.value)}
+          alt={file.value}
         />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="h2">
-            Temporary title
+      </div>
+      <CardContent>
+        <Typography
+          gutterBottom
+          component="p"
+          className={classes.title}
+        >
+          {formatTitle(getImageFilenameFromWDCFilePath(image.value))}
+        </Typography>
+
+        {fileLabel?.['xml:lang'] && (
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            component="p"
+            className={classes.desc}
+          >
+            {formatDesc(fileLabel.value)}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            Temporary description
-          </Typography>
-        </CardContent>
-      </CardActionArea>
+        )}
+      </CardContent>
       <CardActions>
-        <Button size="small" color="primary">
+        <Button
+          size="small"
+          color="primary"
+          href={file.value}
+          target="_blank"
+        >
           Learn More
         </Button>
       </CardActions>
     </Card>
-  </Box>
-);
+  );
+};
 
 export default MediaBox;

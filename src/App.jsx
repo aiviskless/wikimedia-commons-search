@@ -5,13 +5,12 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Box, CircularProgress } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
-import SPARQLQueryDispatcher from './SPARQLQueryDispatcher';
+import SPARQLQueryDispatcher from './utils/SPARQLQueryDispatcher';
 import SearchResultOption from './components/SearchResultOption';
 import MediaBox from './components/MediaBox';
-
-const TIMEOUT_FOR_SEARCH = 500;
-const MEDIA_LIMIT = 100;
-const MEDIA_LIMIT_IN_PAGE = 8;
+import {
+  MEDIA_LIMIT, MEDIA_LIMIT_IN_PAGE, TIMEOUT_FOR_SEARCH, WCQS_ENDPOINT,
+} from './consts';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -60,16 +59,17 @@ function App() {
     setEntityMediaResults([]);
     setPage(1);
 
-    const endpointUrl = 'https://wcqs-beta.wmflabs.org/sparql';
-
+    // SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
     const sparqlQuery = `
-    SELECT ?file ?image WHERE {
-      ?file wdt:P180 wd:${id} .
-      ?file schema:contentUrl ?url .
-      bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)))) AS ?image)
-    } limit ${MEDIA_LIMIT}`;
+      SELECT ?file ?image ?fileLabel ?thumb WHERE {
+        ?file wdt:P180 wd:${id} .
+        ?file schema:contentUrl ?url .
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+        bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=350")) AS ?image)
+      } limit ${MEDIA_LIMIT}
+    `;
 
-    const queryDispatcher = new SPARQLQueryDispatcher(endpointUrl);
+    const queryDispatcher = new SPARQLQueryDispatcher(WCQS_ENDPOINT);
 
     queryDispatcher.query(sparqlQuery).then((data) => setEntityMediaResults(data.results.bindings));
   };
