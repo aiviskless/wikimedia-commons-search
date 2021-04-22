@@ -66,6 +66,7 @@ const useStyles = makeStyles({
 
   desc: {
     maxWidth: 'fit-content',
+    fontSize: 12,
   },
 });
 
@@ -88,7 +89,6 @@ const MediaBox = ({ data: { image, fileLabel, file } }) => {
 
         {fileLabel?.['xml:lang'] && (
           <Typography
-            variant="caption"
             color="textSecondary"
             className={classes.desc}
           >

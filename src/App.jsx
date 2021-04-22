@@ -1,5 +1,7 @@
 import './App.css';
-import React, { Children, useRef, useState } from 'react';
+import React, {
+  Children, useEffect, useRef, useState,
+} from 'react';
 import WBK from 'wikibase-sdk';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -12,7 +14,13 @@ import {
   MEDIA_LIMIT, MEDIA_LIMIT_IN_PAGE, TIMEOUT_FOR_SEARCH, WCQS_ENDPOINT,
 } from './consts';
 
+const wdk = WBK({
+  instance: 'https://www.wikidata.org',
+  sparqlEndpoint: 'https://query.wikidata.org/sparql',
+});
+
 function App() {
+  const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const [inputSearchResults, setInputSearchResults] = useState([]);
   const [entityMediaResults, setEntityMediaResults] = useState([]);
@@ -21,46 +29,16 @@ function App() {
 
   const [page, setPage] = useState(1);
 
-  const handleChange = (event, value) => {
-    setPage(value);
+  const handleChange = (event, newPage) => {
+    setPage(newPage);
   };
 
   const timer = useRef(null);
-
-  const wdk = WBK({
-    instance: 'https://www.wikidata.org',
-    sparqlEndpoint: 'https://query.wikidata.org/sparql',
-  });
-
-  const handleOnChange = (e) => {
-    setInputValue(e.target.value);
-
-    if (e?.target?.value?.length < 2) return false;
-
-    if (timer.current) {
-      clearTimeout(timer.current);
-    }
-
-    timer.current = setTimeout(() => {
-      setLoading(true);
-      const url = wdk.searchEntities(inputValue);
-
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          setInputSearchResults(data.search);
-          setLoading(false);
-        });
-    }, TIMEOUT_FOR_SEARCH);
-
-    return true;
-  };
 
   const handleOnClick = (id) => {
     setEntityMediaResults([]);
     setPage(1);
 
-    // SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
     const sparqlQuery = `
       SELECT ?file ?image ?fileLabel ?thumb WHERE {
         ?file wdt:P180 wd:${id} .
@@ -73,38 +51,69 @@ function App() {
     const queryDispatcher = new SPARQLQueryDispatcher(WCQS_ENDPOINT);
 
     queryDispatcher.query(sparqlQuery).then((data) => {
-      setEntityMediaResults(data.results.bindings);
-
       if (data.results.bindings.length === 0) {
         setNoResults(true);
       } else {
+        setEntityMediaResults(data.results.bindings);
         setNoResults(false);
       }
     });
   };
 
-  console.log(entityMediaResults, 'entityMediaResults');
+  console.log(entityMediaResults, 'entityMediaResults', inputSearchResults);
 
   const indexOfLastTodo = page * MEDIA_LIMIT_IN_PAGE;
   const indexOfFirstTodo = indexOfLastTodo - MEDIA_LIMIT_IN_PAGE;
+
+  useEffect(() => {
+    if (inputValue === '') {
+      return undefined;
+    }
+
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+
+    timer.current = setTimeout(() => {
+      setLoading(true);
+      const url = wdk.searchEntities(inputValue);
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          setInputSearchResults(data.search);
+          setLoading(false);
+        });
+    }, TIMEOUT_FOR_SEARCH);
+
+    return true;
+  }, [inputValue]);
 
   return (
     <div className="App">
       <Box width={500}>
         <Autocomplete
-          freeSolo
-          options={[...inputSearchResults]}
+          id="autocomplete"
+          // freeSolo
+          // autoComplete
+          options={inputSearchResults}
           renderOption={(option) => (
             <SearchResultOption onClick={() => handleOnClick(option.id)} option={option} />
           )}
+          // eslint-disable-next-line no-shadow
+          getOptionSelected={(option, value) => option.title === value.title}
           getOptionLabel={(option) => option.label}
           loading={loading}
           filterOptions={(x) => x}
+          value={value}
+          onChange={(event, newValue) => {
+            setValue(newValue);
+          }}
+          onInputChange={(event, newInputValue) => {
+            setInputValue(newInputValue);
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
-              onChange={handleOnChange}
-              value={inputValue}
               label="Search Wikimedia Commons"
               margin="normal"
               variant="outlined"
@@ -139,7 +148,6 @@ function App() {
           count={Math.ceil(entityMediaResults.length / MEDIA_LIMIT_IN_PAGE)}
           page={page}
           onChange={handleChange}
-          size="large"
         />
       )}
     </div>

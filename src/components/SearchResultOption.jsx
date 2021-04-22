@@ -3,7 +3,7 @@ import React from 'react';
 
 const SearchResultOption = ({ onClick, option }) => (
   <Box display="flex" flexDirection="column" onClick={() => onClick(option.id)}>
-    <Box>{option.label}</Box>
+    <Typography>{option.label}</Typography>
     <Typography variant="caption">{option.description}</Typography>
   </Box>
 );
