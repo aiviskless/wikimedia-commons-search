@@ -76,6 +76,7 @@ function App() {
 
   useEffect(() => {
     if (inputValue === '') {
+      setNoResults(false);
       return undefined;
     }
 
@@ -106,7 +107,9 @@ function App() {
           // autoComplete
           options={inputSearchResults}
           renderOption={(option) => (
-            <SearchResultOption onClick={() => handleOnClick(option.id)} option={option} />
+            <Box width="100%">
+              <SearchResultOption onClick={() => handleOnClick(option.id)} option={option} />
+            </Box>
           )}
           // eslint-disable-next-line no-shadow
           getOptionSelected={(option, value) => option.title === value.title}

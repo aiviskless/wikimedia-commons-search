@@ -31,7 +31,6 @@ const formatDesc = (desc) => {
 
 const useStyles = makeStyles({
   root: {
-    width: 'fit-content',
     height: 'fit-content',
     margin: 16,
 
@@ -51,8 +50,6 @@ const useStyles = makeStyles({
   },
 
   media: {
-    // textAlign: 'center',
-
     '& img': {
       objectFit: 'cover !important',
     },
@@ -60,10 +57,6 @@ const useStyles = makeStyles({
     '& img:hover': {
       cursor: 'zoom-in !important',
     },
-
-    // '& div:first-child': {
-    //   height: '100%',
-    // },
   },
 
   desc: {

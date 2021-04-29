@@ -2,7 +2,7 @@ import { Box, Typography } from '@material-ui/core';
 import React from 'react';
 
 const SearchResultOption = ({ onClick, option }) => (
-  <Box display="flex" flexDirection="column" onClick={() => onClick(option.id)}>
+  <Box display="flex" flexDirection="column" onClick={onClick}>
     <Typography>{option.label}</Typography>
     <Typography variant="caption">{option.description}</Typography>
   </Box>
