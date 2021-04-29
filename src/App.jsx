@@ -102,6 +102,7 @@ function App() {
     <div className={classes.root}>
       <Box maxWidth={500} width="100%">
         <Autocomplete
+          clearOnBlur={false}
           id="autocomplete"
           // freeSolo
           // autoComplete
