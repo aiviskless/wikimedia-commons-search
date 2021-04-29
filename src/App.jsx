@@ -1,18 +1,28 @@
-import './App.css';
 import React, {
   Children, useEffect, useRef, useState,
 } from 'react';
 import WBK from 'wikibase-sdk';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { Box, CircularProgress, Typography } from '@material-ui/core';
-import Pagination from '@material-ui/lab/Pagination';
+import {
+  Box, CircularProgress, makeStyles, Typography,
+} from '@material-ui/core';
+import { isMobile } from 'react-device-detect';
 import SPARQLQueryDispatcher from './utils/SPARQLQueryDispatcher';
 import SearchResultOption from './components/SearchResultOption';
 import MediaBox from './components/MediaBox';
 import {
-  MEDIA_LIMIT, MEDIA_LIMIT_IN_PAGE, TIMEOUT_FOR_SEARCH, WCQS_ENDPOINT,
+  MEDIA_LIMIT, TIMEOUT_FOR_SEARCH, WCQS_ENDPOINT,
 } from './consts';
+
+const useStyles = makeStyles({
+  root: {
+    padding: isMobile ? '10px' : '25px 50px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+});
 
 const wdk = WBK({
   instance: 'https://www.wikidata.org',
@@ -20,6 +30,7 @@ const wdk = WBK({
 });
 
 function App() {
+  const classes = useStyles();
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const [inputSearchResults, setInputSearchResults] = useState([]);
@@ -27,24 +38,17 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
 
-  const [page, setPage] = useState(1);
-
-  const handleChange = (event, newPage) => {
-    setPage(newPage);
-  };
-
   const timer = useRef(null);
 
   const handleOnClick = (id) => {
     setEntityMediaResults([]);
-    setPage(1);
 
     const sparqlQuery = `
       SELECT ?file ?image ?fileLabel ?thumb WHERE {
         ?file wdt:P180 wd:${id} .
         ?file schema:contentUrl ?url .
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-        bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=350")) AS ?image)
+        bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=${isMobile ? 100 : 200}")) AS ?image)
       } limit ${MEDIA_LIMIT}
     `;
 
@@ -61,9 +65,6 @@ function App() {
   };
 
   console.log(entityMediaResults, 'entityMediaResults', inputSearchResults);
-
-  const indexOfLastTodo = page * MEDIA_LIMIT_IN_PAGE;
-  const indexOfFirstTodo = indexOfLastTodo - MEDIA_LIMIT_IN_PAGE;
 
   useEffect(() => {
     if (inputValue === '') {
@@ -89,8 +90,8 @@ function App() {
   }, [inputValue]);
 
   return (
-    <div className="App">
-      <Box width={500}>
+    <div className={classes.root}>
+      <Box maxWidth={500} width="100%">
         <Autocomplete
           id="autocomplete"
           // freeSolo
@@ -122,7 +123,7 @@ function App() {
                 endAdornment: (
                   <>
                     {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                    {params.InputProps.endAdornment}
+                    {inputSearchResults.length > 0 ? params.InputProps.endAdornment : null}
                   </>
                 ),
               }}
@@ -133,23 +134,21 @@ function App() {
 
       {entityMediaResults.length > 0 && (
         <Box display="flex" flexWrap="wrap" justifyContent="center">
-          {Children.toArray(
-            entityMediaResults.slice(indexOfFirstTodo, indexOfLastTodo).map((result) => (
-              <MediaBox data={result} />
-            )),
-          )}
+          {Children.toArray(entityMediaResults.map((result) => (
+            <MediaBox data={result} />
+          )))}
         </Box>
       )}
 
       {noResults && <Typography>No results...</Typography>}
 
-      {entityMediaResults.length > 0 && (
+      {/* {entityMediaResults.length > 0 && (
         <Pagination
           count={Math.ceil(entityMediaResults.length / MEDIA_LIMIT_IN_PAGE)}
           page={page}
           onChange={handleChange}
         />
-      )}
+      )} */}
     </div>
   );
 }

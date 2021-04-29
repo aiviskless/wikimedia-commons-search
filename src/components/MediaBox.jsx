@@ -6,6 +6,9 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core';
 import ModalImage from 'react-modal-image';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
+import { isMobile } from 'react-device-detect';
 
 const getFullsizeImage = (url) => url.split('?width')[0];
 
@@ -43,16 +46,16 @@ const useStyles = makeStyles({
   title: {
     maxWidth: 'fit-content',
     wordBreak: 'break-all',
-    fontSize: 14,
+    fontSize: isMobile ? 12 : 14,
   },
 
   media: {
     textAlign: 'center',
-    height: 150,
 
     '& img': {
       height: '100%',
-      width: 'auto',
+      width: '100%',
+      objectFit: 'cover !important',
     },
 
     '& img:hover': {
@@ -66,7 +69,7 @@ const useStyles = makeStyles({
 
   desc: {
     maxWidth: 'fit-content',
-    fontSize: 12,
+    fontSize: isMobile ? 10 : 12,
   },
 });
 
@@ -76,10 +79,17 @@ const MediaBox = ({ data: { image, fileLabel, file } }) => {
   return (
     <Card className={classes.root}>
       <div className={classes.media}>
-        <ModalImage
+        {/* <ModalImage
           small={image.value}
           large={getFullsizeImage(image.value)}
           alt={file.value}
+        /> */}
+        <LazyLoadImage
+          alt={file.value}
+          effect="blur"
+          src={image.value}
+          height={isMobile ? 100 : 200}
+          width={isMobile ? 100 : 200}
         />
       </div>
       <CardContent>
