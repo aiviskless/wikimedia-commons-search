@@ -8,6 +8,7 @@ import {
   Box, CircularProgress, makeStyles, Typography,
 } from '@material-ui/core';
 import { isMobile } from 'react-device-detect';
+import { Lightbox } from 'react-modal-image';
 import SPARQLQueryDispatcher from './utils/SPARQLQueryDispatcher';
 import SearchResultOption from './components/SearchResultOption';
 import MediaBox from './components/MediaBox';
@@ -37,6 +38,7 @@ function App() {
   const [entityMediaResults, setEntityMediaResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [noResults, setNoResults] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(false);
 
   const timer = useRef(null);
 
@@ -64,6 +66,10 @@ function App() {
         setNoResults(false);
       }
     });
+  };
+
+  const closeLightbox = () => {
+    setSelectedImage(false);
   };
 
   console.log(entityMediaResults, 'entityMediaResults', inputSearchResults);
@@ -137,33 +143,23 @@ function App() {
       {entityMediaResults.length > 0 && (
         <Box display="flex" flexWrap="wrap" justifyContent="center">
           {Children.toArray(entityMediaResults.map((result) => (
-            <MediaBox data={result} />
+            <MediaBox data={result} onClick={() => setSelectedImage(result)} />
           )))}
         </Box>
       )}
 
       {noResults && <Typography>No results...</Typography>}
 
-      {/* {entityMediaResults.length > 0 && (
-        <Pagination
-          count={Math.ceil(entityMediaResults.length / MEDIA_LIMIT_IN_PAGE)}
-          page={page}
-          onChange={handleChange}
+      {selectedImage && (
+        <Lightbox
+          large={selectedImage.fileOrig.value}
+          alt={selectedImage.file.value}
+          onClose={closeLightbox}
         />
-      )} */}
+      )}
+
     </div>
   );
 }
 
 export default App;
-
-// useEffect(() => {
-//   // WIKIMEDIA API THINGY
-//   const url = 'https://api.wikimedia.org/feed/v1/wikipedia/en/featured/2021/04/02';
-//   fetch(url, {
-//     headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-//   })
-//     .then((response) => response.json())
-//     .then(console.log);
-
-// }, []);

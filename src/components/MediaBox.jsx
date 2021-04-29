@@ -5,7 +5,6 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core';
-import ModalImage from 'react-modal-image';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { isMobile } from 'react-device-detect';
@@ -52,11 +51,9 @@ const useStyles = makeStyles({
   },
 
   media: {
-    textAlign: 'center',
+    // textAlign: 'center',
 
     '& img': {
-      height: '100%',
-      width: '100%',
       objectFit: 'cover !important',
     },
 
@@ -64,9 +61,9 @@ const useStyles = makeStyles({
       cursor: 'zoom-in !important',
     },
 
-    '& div:first-child': {
-      height: '100%',
-    },
+    // '& div:first-child': {
+    //   height: '100%',
+    // },
   },
 
   desc: {
@@ -79,18 +76,13 @@ const MediaBox = ({
   data: {
     thumb, fileLabel, file, encoding, fileOrig,
   },
+  onClick = () => {},
 }) => {
   const classes = useStyles();
 
   return (
     <Card className={classes.root}>
       <div className={classes.media}>
-        {/* <ModalImage
-          small={image.value}
-          large={getFullsizeImage(image.value)}
-          alt={file.value}
-        /> */}
-
         {NOT_IMAGE_ENCODINGS.includes(encoding.value) ? (
           <ReactPlayer
             controls
@@ -100,6 +92,7 @@ const MediaBox = ({
           />
         ) : (
           <LazyLoadImage
+            onClick={onClick}
             alt={file.value}
             effect="blur"
             src={thumb.value}
