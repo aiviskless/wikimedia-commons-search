@@ -44,11 +44,13 @@ function App() {
     setEntityMediaResults([]);
 
     const sparqlQuery = `
-      SELECT ?file ?image ?fileLabel ?thumb WHERE {
+      SELECT ?file ?thumb ?fileOrig ?fileLabel ?encoding WHERE {
         ?file wdt:P180 wd:${id} .
         ?file schema:contentUrl ?url .
+        ?file schema:encodingFormat ?encoding .
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-        bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=${isMobile ? 100 : 200}")) AS ?image)
+        bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=${isMobile ? 100 : 200}")) AS ?thumb)
+        bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)))) AS ?fileOrig)
       } limit ${MEDIA_LIMIT}
     `;
 

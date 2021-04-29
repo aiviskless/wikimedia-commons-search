@@ -9,6 +9,8 @@ import ModalImage from 'react-modal-image';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { isMobile } from 'react-device-detect';
+import ReactPlayer from 'react-player';
+import { NOT_IMAGE_ENCODINGS } from '../consts';
 
 const getFullsizeImage = (url) => url.split('?width')[0];
 
@@ -73,7 +75,11 @@ const useStyles = makeStyles({
   },
 });
 
-const MediaBox = ({ data: { image, fileLabel, file } }) => {
+const MediaBox = ({
+  data: {
+    thumb, fileLabel, file, encoding, fileOrig,
+  },
+}) => {
   const classes = useStyles();
 
   return (
@@ -84,17 +90,28 @@ const MediaBox = ({ data: { image, fileLabel, file } }) => {
           large={getFullsizeImage(image.value)}
           alt={file.value}
         /> */}
-        <LazyLoadImage
-          alt={file.value}
-          effect="blur"
-          src={image.value}
-          height={isMobile ? 100 : 200}
-          width={isMobile ? 100 : 200}
-        />
+
+        {NOT_IMAGE_ENCODINGS.includes(encoding.value) ? (
+          <ReactPlayer
+            controls
+            url={fileOrig.value}
+            height={isMobile ? 94 : 169}
+            width={isMobile ? 125 : 225}
+          />
+        ) : (
+          <LazyLoadImage
+            alt={file.value}
+            effect="blur"
+            src={thumb.value}
+            height={isMobile ? 94 : 169}
+            width={isMobile ? 125 : 225}
+          />
+        )}
       </div>
+
       <CardContent>
         <Typography className={classes.title} gutterBottom>
-          {formatTitle(getImageFilenameFromWDCFilePath(image.value))}
+          {formatTitle(getImageFilenameFromWDCFilePath(fileOrig.value))}
         </Typography>
 
         {fileLabel?.['xml:lang'] && (
@@ -106,6 +123,7 @@ const MediaBox = ({ data: { image, fileLabel, file } }) => {
           </Typography>
         )}
       </CardContent>
+
       <CardActions>
         <Button
           size="small"
