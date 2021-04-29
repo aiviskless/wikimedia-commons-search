@@ -42,12 +42,16 @@ function App() {
 
   const timer = useRef(null);
 
-  const handleOnClick = (id) => {
+  const handleOnValueChange = (event, newValue) => {
+    setValue(newValue);
+
+    if (!newValue) return false;
+
     setEntityMediaResults([]);
 
     const sparqlQuery = `
       SELECT ?file ?thumb ?fileOrig ?fileLabel ?encoding WHERE {
-        ?file wdt:P180 wd:${id} .
+        ?file wdt:P180 wd:${newValue.id} .
         ?file schema:contentUrl ?url .
         ?file schema:encodingFormat ?encoding .
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
@@ -66,6 +70,8 @@ function App() {
         setNoResults(false);
       }
     });
+
+    return true;
   };
 
   const closeLightbox = () => {
@@ -103,14 +109,10 @@ function App() {
       <Box maxWidth={500} width="100%">
         <Autocomplete
           clearOnBlur={false}
-          id="autocomplete"
-          // freeSolo
-          // autoComplete
+          autoHighlight
           options={inputSearchResults}
           renderOption={(option) => (
-            <Box width="100%">
-              <SearchResultOption onClick={() => handleOnClick(option.id)} option={option} />
-            </Box>
+            <SearchResultOption option={option} />
           )}
           // eslint-disable-next-line no-shadow
           getOptionSelected={(option, value) => option.title === value.title}
@@ -118,9 +120,7 @@ function App() {
           loading={loading}
           filterOptions={(x) => x}
           value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}
+          onChange={handleOnValueChange}
           onInputChange={(event, newInputValue) => {
             setInputValue(newInputValue);
           }}
