@@ -67,7 +67,7 @@ const useStyles = makeStyles({
 
 const MediaBox = ({
   data: {
-    thumb, fileLabel, file, encoding, fileOrig,
+    thumb, fileLabel, file, encoding, fileOrig, itemLabel,
   },
   onClick = () => {},
 }) => {
@@ -100,14 +100,23 @@ const MediaBox = ({
           {formatTitle(getImageFilenameFromWDCFilePath(fileOrig.value))}
         </Typography>
 
-        {fileLabel?.['xml:lang'] && (
+        {fileLabel?.['xml:lang'] ? (
           <Typography
             color="textSecondary"
             className={classes.desc}
           >
             {formatDesc(fileLabel.value)}
           </Typography>
-        )}
+        )
+          // show Wikidata item description if file description unavailable
+          : itemLabel?.value && (
+            <Typography
+              color="textSecondary"
+              className={classes.desc}
+            >
+              {formatDesc(itemLabel.value)}
+            </Typography>
+          )}
       </CardContent>
 
       <CardActions>

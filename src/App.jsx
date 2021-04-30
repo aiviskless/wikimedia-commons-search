@@ -14,6 +14,11 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     alignItems: 'center',
   },
+
+  inputWrapper: {
+    marginBottom: 16,
+    width: '100%',
+  },
 });
 
 function App() {
@@ -30,7 +35,10 @@ function App() {
 
   return (
     <div className={classes.root}>
-      <Input setNoResults={setNoResults} setEntityMediaResults={setEntityMediaResults} />
+      <div className={classes.inputWrapper}>
+        <Input setNoResults={setNoResults} setEntityMediaResults={setEntityMediaResults} />
+
+      </div>
 
       {entityMediaResults.length > 0 && (
         <Box display="flex" flexWrap="wrap" justifyContent="center">
