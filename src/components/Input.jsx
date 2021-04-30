@@ -29,7 +29,6 @@ const useStyles = makeStyles({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
-    margin: '0 auto',
   },
 
   autocomplete: {

@@ -16,13 +16,20 @@ const useStyles = makeStyles({
   },
 
   inputWrapper: {
-    marginBottom: 16,
+    marginBottom: 8,
     width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
 
   loadingWrapper: {
     position: 'absolute',
     top: '50%',
+  },
+
+  count: {
+    marginTop: 8,
   },
 });
 
@@ -47,6 +54,9 @@ const App = () => {
           setEntityMediaResults={setEntityMediaResults}
           setResultsLoading={setLoading}
         />
+        {entityMediaResults.length > 0 && (
+          <small className={classes.count}>{`${entityMediaResults.length} results`}</small>
+        )}
       </div>
 
       {loading && (
