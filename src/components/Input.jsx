@@ -41,7 +41,7 @@ const useStyles = makeStyles({
   },
 });
 
-const Input = ({ setNoResults, setEntityMediaResults }) => {
+const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState('');
@@ -58,7 +58,7 @@ const Input = ({ setNoResults, setEntityMediaResults }) => {
     if (!valueToSearch) return false;
 
     setEntityMediaResults([]);
-
+    setResultsLoading(true);
     let newEntityMediaResults = [];
 
     // define first query
@@ -83,8 +83,11 @@ const Input = ({ setNoResults, setEntityMediaResults }) => {
 
       if (!includeSubclassSearch) {
         if (newEntityMediaResults.length === 0) setNoResults(true);
+        setResultsLoading(false);
         return true;
       }
+
+      if (newEntityMediaResults.length > 0) setResultsLoading(false);
 
       // define query that searches for subclasses as well
       sparqlQuery = `
@@ -114,13 +117,14 @@ const Input = ({ setNoResults, setEntityMediaResults }) => {
         newEntityMediaResults = newEntityMediaResults.concat(data.results.bindings);
         setEntityMediaResults([...newEntityMediaResults]);
         if (newEntityMediaResults.length === 0) setNoResults(true);
+        setResultsLoading(false);
       });
 
       return true;
     });
 
     return true;
-  }, [includeSubclassSearch, setEntityMediaResults, setNoResults]);
+  }, [includeSubclassSearch, setEntityMediaResults, setNoResults, setResultsLoading]);
 
   const handleOnValueChange = (event, newValue) => {
     setValue(newValue);

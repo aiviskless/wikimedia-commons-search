@@ -1,6 +1,6 @@
 import React, { Children, useState } from 'react';
 import {
-  Box, makeStyles, Typography,
+  Box, CircularProgress, makeStyles, Typography,
 } from '@material-ui/core';
 import { isMobile } from 'react-device-detect';
 import { Lightbox } from 'react-modal-image';
@@ -19,13 +19,19 @@ const useStyles = makeStyles({
     marginBottom: 16,
     width: '100%',
   },
+
+  loadingWrapper: {
+    position: 'absolute',
+    top: '50%',
+  },
 });
 
-function App() {
+const App = () => {
   const classes = useStyles();
   const [entityMediaResults, setEntityMediaResults] = useState([]);
   const [noResults, setNoResults] = useState(false);
   const [selectedImage, setSelectedImage] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const closeLightbox = () => {
     setSelectedImage(false);
@@ -36,9 +42,18 @@ function App() {
   return (
     <div className={classes.root}>
       <div className={classes.inputWrapper}>
-        <Input setNoResults={setNoResults} setEntityMediaResults={setEntityMediaResults} />
-
+        <Input
+          setNoResults={setNoResults}
+          setEntityMediaResults={setEntityMediaResults}
+          setResultsLoading={setLoading}
+        />
       </div>
+
+      {loading && (
+        <div className={classes.loadingWrapper}>
+          <CircularProgress />
+        </div>
+      )}
 
       {entityMediaResults.length > 0 && (
         <Box display="flex" flexWrap="wrap" justifyContent="center">
@@ -59,6 +74,6 @@ function App() {
       )}
     </div>
   );
-}
+};
 
 export default App;
