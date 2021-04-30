@@ -9,7 +9,7 @@ import Input from './components/Input';
 
 const useStyles = makeStyles({
   root: {
-    padding: isMobile ? '10px' : '25px 50px',
+    padding: isMobile ? '20px 10px' : '25px 50px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

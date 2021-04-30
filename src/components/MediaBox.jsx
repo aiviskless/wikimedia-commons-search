@@ -32,7 +32,7 @@ const formatDesc = (desc) => {
 const useStyles = makeStyles({
   root: {
     height: 'fit-content',
-    margin: 16,
+    margin: isMobile ? 8 : 16,
 
     '& .MuiCardContent-root': {
       padding: 8,

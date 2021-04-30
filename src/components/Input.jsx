@@ -2,7 +2,6 @@ import React, {
   useEffect,
   useRef,
   useState,
-  useCallback,
 } from 'react';
 import WBK from 'wikibase-sdk';
 import TextField from '@material-ui/core/TextField';
@@ -14,7 +13,7 @@ import { isMobile } from 'react-device-detect';
 import SPARQLQueryDispatcher from '../utils/SPARQLQueryDispatcher';
 import SearchResultOption from './SearchResultOption';
 import {
-  MEDIA_LIMIT, TIMEOUT_FOR_SEARCH, WCQS_ENDPOINT,
+  DEFAULT_MEDIA_LIMIT, TIMEOUT_FOR_SEARCH, WCQS_ENDPOINT,
 } from '../consts';
 import SearchSettings from './SearchSettings';
 
@@ -48,13 +47,19 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
 
   // settings
   const [includeSubclassSearch, setIncludeSubclassSearch] = useState(true);
+  const [mediaLimit, setMediaLimit] = useState(DEFAULT_MEDIA_LIMIT);
 
   const timer = useRef(null);
 
   const classes = useStyles();
 
-  const searchCommons = useCallback((valueToSearch) => {
-    if (!valueToSearch) return false;
+  const handleOnValueChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  // useEffect for Commons search
+  useEffect(() => {
+    if (!value) return false;
 
     setEntityMediaResults([]);
     setResultsLoading(true);
@@ -63,13 +68,13 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
     // define first query
     let sparqlQuery = `
       SELECT ?file ?thumb ?fileOrig ?fileLabel ?encoding WHERE {
-        ?file wdt:P180 wd:${valueToSearch.id} .
+        ?file wdt:P180 wd:${value.id} .
         ?file schema:contentUrl ?url .
         ?file schema:encodingFormat ?encoding .
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
         bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=${isMobile ? 100 : 200}")) AS ?thumb)
         bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)))) AS ?fileOrig)
-      } limit ${MEDIA_LIMIT}
+      } limit ${mediaLimit}
     `;
 
     const queryDispatcher = new SPARQLQueryDispatcher(WCQS_ENDPOINT);
@@ -94,7 +99,7 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
         WITH 
         { SELECT ?item ?itemLabel WHERE
           { SERVICE <https://query.wikidata.org/sparql> 
-            { ?item wdt:P31/wdt:P279* wd:${valueToSearch.id} .
+            { ?item wdt:P31/wdt:P279* wd:${value.id} .
               SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel .}
             }
           }
@@ -108,7 +113,7 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
           SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
           bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=${isMobile ? 100 : 200}")) AS ?thumb)
           bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)))) AS ?fileOrig)
-        } limit ${MEDIA_LIMIT}
+        } limit ${mediaLimit}
       `;
 
       // eslint-disable-next-line no-shadow
@@ -123,17 +128,9 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
     });
 
     return true;
-  }, [includeSubclassSearch, setEntityMediaResults, setNoResults, setResultsLoading]);
+  }, [includeSubclassSearch, value]);
 
-  const handleOnValueChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  // search again on includeSubclassSearch
-  useEffect(() => {
-    searchCommons(value);
-  }, [includeSubclassSearch, value, searchCommons]);
-
+  // useEffect for input change and Wikidata search
   useEffect(() => {
     if (inputValue === '') {
       setNoResults(false);
@@ -164,6 +161,8 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
         <SearchSettings
           setIncludeSubclassSearch={setIncludeSubclassSearch}
           includeSubclassSearch={includeSubclassSearch}
+          setMediaLimit={setMediaLimit}
+          mediaLimit={mediaLimit}
         />
       </div>
 

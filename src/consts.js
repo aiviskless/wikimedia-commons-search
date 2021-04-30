@@ -1,6 +1,6 @@
 export const TIMEOUT_FOR_SEARCH = 500;
-export const MEDIA_LIMIT = 1000;
-export const MEDIA_LIMIT_IN_PAGE = 100;
+export const DEFAULT_MEDIA_LIMIT = 1000;
+export const MAX_MEDIA_LIMIT = 1500;
 export const WCQS_ENDPOINT = 'https://wcqs-beta.wmflabs.org/sparql';
 
 export const NOT_IMAGE_ENCODINGS = [

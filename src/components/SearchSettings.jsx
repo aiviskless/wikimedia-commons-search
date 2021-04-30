@@ -3,6 +3,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import {
   Checkbox, FormControlLabel, IconButton, makeStyles, Popover,
 } from '@material-ui/core';
+import MediaLimitSlider from './MediaLimitSlider';
 
 const useStyles = makeStyles({
   popoverContent: {
@@ -12,11 +13,17 @@ const useStyles = makeStyles({
       margin: 0,
     },
   },
+
+  sliderWrapper: {
+    marginTop: 16,
+  },
 });
 
 const SearchSettings = ({
   setIncludeSubclassSearch,
   includeSubclassSearch,
+  setMediaLimit,
+  mediaLimit,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -69,6 +76,13 @@ const SearchSettings = ({
             label="Include subclass search"
             labelPlacement="start"
           />
+
+          <div className={classes.sliderWrapper}>
+            <MediaLimitSlider
+              setMediaLimit={setMediaLimit}
+              mediaLimit={mediaLimit}
+            />
+          </div>
         </div>
       </Popover>
     </div>
