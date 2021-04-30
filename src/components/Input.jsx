@@ -128,6 +128,7 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
     });
 
     return true;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [includeSubclassSearch, value]);
 
   // useEffect for input change and Wikidata search

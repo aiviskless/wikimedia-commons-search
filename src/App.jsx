@@ -6,6 +6,7 @@ import { isMobile } from 'react-device-detect';
 import { Lightbox } from 'react-modal-image';
 import MediaBox from './components/MediaBox';
 import Input from './components/Input';
+import MediaTypeTabs from './components/MediaTypeTabs';
 
 const useStyles = makeStyles({
   root: {
@@ -29,7 +30,14 @@ const useStyles = makeStyles({
   },
 
   count: {
-    marginTop: 8,
+    marginTop: 12,
+  },
+
+  wrapper: {
+    marginTop: 12,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
 });
 
@@ -55,7 +63,10 @@ const App = () => {
           setResultsLoading={setLoading}
         />
         {entityMediaResults.length > 0 && (
-          <small className={classes.count}>{`${entityMediaResults.length} results`}</small>
+          <div className={classes.wrapper}>
+            <MediaTypeTabs />
+            <small className={classes.count}>{`${entityMediaResults.length} results`}</small>
+          </div>
         )}
       </div>
 
