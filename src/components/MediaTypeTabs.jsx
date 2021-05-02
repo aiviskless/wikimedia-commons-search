@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AudiotrackIcon from '@material-ui/icons/Audiotrack';
@@ -33,13 +33,11 @@ const useStyles = makeStyles({
   },
 });
 
-const MediaTypeTabs = () => {
-  const [value, setValue] = useState(0);
-
+const MediaTypeTabs = ({ setTab, tab }) => {
   const classes = useStyles();
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setTab(newValue);
   };
 
   const TABS = [
@@ -63,13 +61,15 @@ const MediaTypeTabs = () => {
 
   return (
     <Tabs
-      value={value}
+      value={tab}
       indicatorColor="primary"
       textColor="primary"
       onChange={handleChange}
       className={classes.root}
     >
-      {TABS.map(({ label, icon }) => <Tab className={classes.tab} label={label} icon={icon} />)}
+      {TABS.map(({ label, icon }) => (
+        <Tab key={label} className={classes.tab} label={label} icon={icon} />
+      ))}
     </Tabs>
   );
 };

@@ -7,6 +7,11 @@ import { Lightbox } from 'react-modal-image';
 import MediaBox from './components/MediaBox';
 import Input from './components/Input';
 import MediaTypeTabs from './components/MediaTypeTabs';
+import {
+  ALL_TAB, AUDIO_FILE_EXTS, AUDIO_TAB, IMAGES_TAB, IMAGE_FILE_EXTS, VIDEO_FILE_EXTS, VIDEO_TAB,
+} from './consts';
+import getFilenameExtension from './utils/getFilenameExtension';
+import getFilenameFromWDCFilePath from './utils/getFilenameFromWDCFilePath';
 
 const useStyles = makeStyles({
   root: {
@@ -47,13 +52,38 @@ const App = () => {
   const [noResults, setNoResults] = useState(false);
   const [selectedImage, setSelectedImage] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [tab, setTab] = useState(ALL_TAB);
 
   const closeLightbox = () => {
     setSelectedImage(false);
   };
 
-  console.log(entityMediaResults, 'entityMediaResults');
+  const filterResults = () => {
+    const filterExts = (files, extensions) => files.filter((media) => (
+      extensions.includes(
+        getFilenameExtension(getFilenameFromWDCFilePath(media.fileOrig.value)),
+      )
+      || extensions.includes(
+        getFilenameExtension(getFilenameFromWDCFilePath(media.fileOrig.value.toLowerCase())),
+      )
+    ));
 
+    switch (tab) {
+      case IMAGES_TAB:
+        return filterExts(entityMediaResults, IMAGE_FILE_EXTS);
+      case VIDEO_TAB:
+        return filterExts(entityMediaResults, VIDEO_FILE_EXTS);
+      case AUDIO_TAB:
+        return filterExts(entityMediaResults, AUDIO_FILE_EXTS);
+      default:
+        return entityMediaResults;
+    }
+  };
+
+  const filteredResults = filterResults();
+
+  console.log(entityMediaResults, 'entityMediaResults');
+  console.log(filteredResults);
   return (
     <div className={classes.root}>
       <div className={classes.inputWrapper}>
@@ -64,8 +94,8 @@ const App = () => {
         />
         {entityMediaResults.length > 0 && (
           <div className={classes.wrapper}>
-            <MediaTypeTabs />
-            <small className={classes.count}>{`${entityMediaResults.length} results`}</small>
+            <MediaTypeTabs setTab={setTab} tab={tab} />
+            <small className={classes.count}>{`${filteredResults.length} results`}</small>
           </div>
         )}
       </div>
@@ -76,9 +106,9 @@ const App = () => {
         </div>
       )}
 
-      {entityMediaResults.length > 0 && (
+      {filteredResults.length > 0 && (
         <Box display="flex" flexWrap="wrap" justifyContent="center">
-          {Children.toArray(entityMediaResults.map((result) => (
+          {Children.toArray(filteredResults.map((result) => (
             <MediaBox data={result} onClick={() => setSelectedImage(result)} />
           )))}
         </Box>

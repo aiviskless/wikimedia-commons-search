@@ -10,14 +10,7 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 import { isMobile } from 'react-device-detect';
 import ReactPlayer from 'react-player';
 import { NOT_IMAGE_ENCODINGS } from '../consts';
-
-const getFullsizeImage = (url) => url.split('?width')[0];
-
-const getImageFilenameFromWDCFilePath = (url) => {
-  const splitUrl = url.split('/');
-
-  return getFullsizeImage(splitUrl[splitUrl.length - 1]);
-};
+import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
 
 const formatTitle = (title) => {
   if (title.length > 50) return `${title.substr(0, 50)}...`;
@@ -97,7 +90,7 @@ const MediaBox = ({
 
       <CardContent>
         <Typography className={classes.title} gutterBottom>
-          {formatTitle(getImageFilenameFromWDCFilePath(fileOrig.value))}
+          {formatTitle(getFilenameFromWDCFilePath(fileOrig.value))}
         </Typography>
 
         {fileLabel?.['xml:lang'] ? (
