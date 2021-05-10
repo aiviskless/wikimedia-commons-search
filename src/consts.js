@@ -2,6 +2,9 @@ export const TIMEOUT_FOR_SEARCH = 500;
 export const DEFAULT_MEDIA_LIMIT = 1000;
 export const MAX_MEDIA_LIMIT = 1500;
 export const WCQS_ENDPOINT = 'https://wcqs-beta.wmflabs.org/sparql';
+export const WDQS_ENDPOINT = 'https://query.wikidata.org/sparql';
+export const WIKIDATA_URL = 'https://www.wikidata.org';
+export const COMMONS_URL = 'https://commons.wikimedia.org/';
 
 export const ALL_TAB = 0;
 export const IMAGES_TAB = 1;

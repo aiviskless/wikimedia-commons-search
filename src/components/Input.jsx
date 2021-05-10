@@ -10,16 +10,25 @@ import {
   CircularProgress, makeStyles,
 } from '@material-ui/core';
 import { isMobile } from 'react-device-detect';
-import SPARQLQueryDispatcher from '../utils/SPARQLQueryDispatcher';
 import SearchResultOption from './SearchResultOption';
 import {
-  DEFAULT_MEDIA_LIMIT, TIMEOUT_FOR_SEARCH, WCQS_ENDPOINT,
+  COMMONS_URL,
+  DEFAULT_MEDIA_LIMIT,
+  TIMEOUT_FOR_SEARCH,
+  WCQS_ENDPOINT,
+  WDQS_ENDPOINT,
+  WIKIDATA_URL,
 } from '../consts';
 import SearchSettings from './SearchSettings';
 
-const wdk = WBK({
-  instance: 'https://www.wikidata.org',
-  sparqlEndpoint: 'https://query.wikidata.org/sparql',
+const wd = WBK({
+  instance: WIKIDATA_URL,
+  sparqlEndpoint: WDQS_ENDPOINT,
+});
+
+const wc = WBK({
+  instance: COMMONS_URL,
+  sparqlEndpoint: WCQS_ENDPOINT,
 });
 
 const useStyles = makeStyles({
@@ -64,6 +73,7 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
     setEntityMediaResults([]);
     setResultsLoading(true);
     let newEntityMediaResults = [];
+    let url;
 
     // define first query
     let sparqlQuery = `
@@ -77,9 +87,9 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
       } limit ${mediaLimit}
     `;
 
-    const queryDispatcher = new SPARQLQueryDispatcher(WCQS_ENDPOINT);
+    url = wc.sparqlQuery(sparqlQuery);
 
-    queryDispatcher.query(sparqlQuery).then((data) => {
+    fetch(url).then((response) => response.json()).then((data) => {
       newEntityMediaResults = newEntityMediaResults.concat(data.results.bindings);
       setNoResults(false);
 
@@ -116,8 +126,9 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
         } limit ${mediaLimit}
       `;
 
+      url = wc.sparqlQuery(sparqlQuery);
       // eslint-disable-next-line no-shadow
-      queryDispatcher.query(sparqlQuery).then((data) => {
+      fetch(url).then((response) => response.json()).then((data) => {
         newEntityMediaResults = newEntityMediaResults.concat(data.results.bindings);
         setEntityMediaResults([...newEntityMediaResults]);
         if (newEntityMediaResults.length === 0) setNoResults(true);
@@ -144,7 +155,7 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
 
     timer.current = setTimeout(() => {
       setLoading(true);
-      const url = wdk.searchEntities(inputValue);
+      const url = wd.searchEntities(inputValue);
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
