@@ -128,7 +128,7 @@ const MediaBox = ({
           <div className={classes.creatorWrapper}>
             <PersonIcon />
             <Typography color="textSecondary" variant="caption">
-              {`${creator.value} (${creatorUploadCount.value})`}
+              {`${creator.value} (${creatorUploadCount?.value || '?'})`}
             </Typography>
           </div>
         )}
