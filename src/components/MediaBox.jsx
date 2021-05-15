@@ -9,6 +9,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { isMobile } from 'react-device-detect';
 import ReactPlayer from 'react-player';
+import PersonIcon from '@material-ui/icons/Person';
 import { NOT_IMAGE_ENCODINGS } from '../consts';
 import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
 
@@ -55,12 +56,27 @@ const useStyles = makeStyles({
   desc: {
     maxWidth: 'fit-content',
     fontSize: isMobile ? 10 : 12,
+    marginBottom: 8,
+  },
+
+  creatorWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+
+    '& svg': {
+      display: 'flex',
+      alignItems: 'center',
+      fontSize: 20,
+      color: 'gray',
+      transform: 'translateY(-2px)',
+      marginRight: 4,
+    },
   },
 });
 
 const MediaBox = ({
   data: {
-    thumb, fileLabel, file, encoding, fileOrig, itemLabel,
+    thumb, fileLabel, file, encoding, fileOrig, itemLabel, creator, creatorUploadCount,
   },
   onClick = () => {},
 }) => {
@@ -103,13 +119,19 @@ const MediaBox = ({
         )
           // show Wikidata item description if file description unavailable
           : itemLabel?.value && (
-            <Typography
-              color="textSecondary"
-              className={classes.desc}
-            >
+            <Typography color="textSecondary" className={classes.desc}>
               {formatDesc(itemLabel.value)}
             </Typography>
           )}
+
+        {creator && (
+          <div className={classes.creatorWrapper}>
+            <PersonIcon />
+            <Typography color="textSecondary" variant="caption">
+              {`${creator.value} (${creatorUploadCount.value})`}
+            </Typography>
+          </div>
+        )}
       </CardContent>
 
       <CardActions>

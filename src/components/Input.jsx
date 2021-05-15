@@ -77,14 +77,20 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
 
     // define first query
     let sparqlQuery = `
-      SELECT ?file ?thumb ?fileOrig ?fileLabel ?encoding WHERE {
+      SELECT ?file ?thumb ?fileOrig ?fileLabel ?encoding ?creator (COUNT(?files) as ?creatorUploadCount) WHERE {
         ?file wdt:P180 wd:${value.id} .
         ?file schema:contentUrl ?url .
         ?file schema:encodingFormat ?encoding .
+
+        OPTIONAL { 
+          ?file p:P170/pq:P4174 ?creator .
+          ?files p:P170/pq:P4174 ?creator .
+        }
+        
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
         bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=${isMobile ? 100 : 200}")) AS ?thumb)
         bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)))) AS ?fileOrig)
-      } limit ${mediaLimit}
+      } group by ?file ?thumb ?fileOrig ?fileLabel ?encoding ?creator ?creatorUploadCount limit ${mediaLimit}
     `;
 
     url = wc.sparqlQuery(sparqlQuery);
@@ -105,12 +111,11 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
 
       // define query that searches for subclasses as well
       sparqlQuery = `
-        SELECT DISTINCT ?item ?itemLabel ?image ?file ?thumb ?fileOrig ?fileLabel ?encoding
-        WITH 
-        { SELECT ?item ?itemLabel WHERE
-          { SERVICE <https://query.wikidata.org/sparql> 
-            { ?item wdt:P31/wdt:P279* wd:${value.id} .
-              SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel .}
+        SELECT DISTINCT ?item ?itemLabel ?image ?file ?thumb ?fileOrig ?fileLabel ?encoding ?creator (COUNT(?files) as ?creatorUploadCount) WITH { 
+          SELECT ?item ?itemLabel WHERE {
+            SERVICE <https://query.wikidata.org/sparql> {
+              ?item wdt:P31/wdt:P279* wd:${value.id} .
+              SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel . }
             }
           }
         } AS %Wikidataitems
@@ -120,10 +125,16 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
           ?file wdt:P180 ?item.
           ?file schema:contentUrl ?url .
           ?file schema:encodingFormat ?encoding .
+
+          OPTIONAL {
+            ?file p:P170/pq:P4174 ?creator .
+            ?files p:P170/pq:P4174 ?creator .
+          }
+
           SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
           bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=${isMobile ? 100 : 200}")) AS ?thumb)
           bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)))) AS ?fileOrig)
-        } limit ${mediaLimit}
+        } group by ?item ?itemLabel ?image ?file ?thumb ?fileOrig ?fileLabel ?encoding ?creator ?creatorUploadCount limit ${mediaLimit}
       `;
 
       url = wc.sparqlQuery(sparqlQuery);
