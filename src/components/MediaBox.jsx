@@ -28,6 +28,7 @@ const useStyles = makeStyles({
   root: {
     height: 'fit-content',
     margin: isMobile ? 8 : 16,
+    width: isMobile ? 125 : 225,
 
     '& .MuiCardContent-root': {
       padding: 8,
@@ -39,7 +40,6 @@ const useStyles = makeStyles({
   },
 
   title: {
-    maxWidth: 'fit-content',
     wordBreak: 'break-all',
     fontSize: isMobile ? 12 : 14,
   },
@@ -55,7 +55,6 @@ const useStyles = makeStyles({
   },
 
   desc: {
-    maxWidth: 'fit-content',
     fontSize: isMobile ? 10 : 12,
     marginBottom: 4,
   },
@@ -76,17 +75,16 @@ const useStyles = makeStyles({
 
   chipsWrapper: {
     display: 'flex',
-    maxWidth: 'fit-content',
     flexWrap: 'wrap',
     margin: '8px 0',
 
     '& > div': {
       margin: 2,
-      height: 20,
+      height: isMobile ? 16 : 20,
     },
 
     '& span': {
-      fontSize: 11,
+      fontSize: isMobile ? 10 : 11,
     },
   },
 });
