@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { Children } from 'react';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { Box, Chip, makeStyles } from '@material-ui/core';
+import { Chip, makeStyles } from '@material-ui/core';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { isMobile } from 'react-device-detect';
 import ReactPlayer from 'react-player';
 import PersonIcon from '@material-ui/icons/Person';
+import { useHistory } from 'react-router';
 import { NOT_IMAGE_ENCODINGS, SEPERATOR } from '../consts';
 import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
 
@@ -56,7 +57,7 @@ const useStyles = makeStyles({
   desc: {
     maxWidth: 'fit-content',
     fontSize: isMobile ? 10 : 12,
-    marginBottom: 8,
+    marginBottom: 4,
   },
 
   creatorWrapper: {
@@ -77,10 +78,11 @@ const useStyles = makeStyles({
     display: 'flex',
     maxWidth: 'fit-content',
     flexWrap: 'wrap',
-    margin: '4px 0',
+    margin: '8px 0',
 
     '& > div': {
       margin: 2,
+      height: 20,
     },
 
     '& span': {
@@ -100,10 +102,16 @@ const MediaBox = ({
     creator,
     creatorUploadCount,
     depictLabels,
+    depictIDs,
   },
   onClick = () => {},
 }) => {
   const classes = useStyles();
+  const history = useHistory();
+
+  const handleOnClickDepict = (label, i) => {
+    history.push(`?search=${depictIDs.value.split(SEPERATOR)[i]}${SEPERATOR}${label}`);
+  };
 
   return (
     <Card className={classes.root}>
@@ -149,7 +157,13 @@ const MediaBox = ({
 
         {depictLabels?.value && (
           <div className={classes.chipsWrapper}>
-            {depictLabels.value.split(SEPERATOR).map((label) => <Chip size="small" label={label} />)}
+            {Children.toArray((depictLabels.value.split(SEPERATOR)).map((label, i) => (
+              <Chip
+                size="small"
+                label={label}
+                onClick={() => handleOnClickDepict(label, i)}
+              />
+            )))}
           </div>
         )}
 

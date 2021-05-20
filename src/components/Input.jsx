@@ -10,6 +10,7 @@ import {
   CircularProgress, makeStyles,
 } from '@material-ui/core';
 import { isMobile } from 'react-device-detect';
+import { useHistory, useLocation } from 'react-router';
 import SearchResultOption from './SearchResultOption';
 import {
   COMMONS_URL,
@@ -59,17 +60,37 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
   const [includeSubclassSearch, setIncludeSubclassSearch] = useState(true);
   const [mediaLimit, setMediaLimit] = useState(DEFAULT_MEDIA_LIMIT);
 
+  const location = useLocation();
+  const history = useHistory();
+
   const timer = useRef(null);
 
   const classes = useStyles();
 
   const handleOnValueChange = (event, newValue) => {
     setValue(newValue);
+    history.push(`?search=${newValue.id}${SEPERATOR}${newValue.label}`);
   };
 
   // useEffect for Commons search
   useEffect(() => {
-    if (!value) return false;
+    // e.g. search?=Q147;kitten
+    const searchValues = location.search.replace('?search=', '').split(SEPERATOR);
+
+    const searchValue = searchValues[0];
+    const searchLabel = searchValues[1];
+
+    if (!searchValue || !searchLabel) return false;
+
+    // if value comes from url change, sync input value
+    if (searchLabel !== inputValue) {
+      fetch(wd.searchEntities(searchLabel))
+        .then((response) => response.json())
+        .then((data) => {
+          setInputSearchResults(data.search);
+          setValue(data.search.find((d) => d.id === searchValue));
+        });
+    }
 
     setEntityMediaResults([]);
     setResultsLoading(true);
@@ -78,16 +99,19 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
 
     // define first query
     let sparqlQuery = `
-      SELECT ?file ?fileLabel ?thumb ?fileOrig ?encoding ?creator (GROUP_CONCAT(?depictLabel; separator = '${SEPERATOR}') AS ?depictLabels)
+      SELECT ?file ?fileLabel ?thumb ?fileOrig ?encoding ?creator (GROUP_CONCAT(?depictID; separator = '${SEPERATOR}') AS ?depictIDs) (GROUP_CONCAT(?depictLabel; separator = '${SEPERATOR}') AS ?depictLabels)
       WITH {  
           SELECT ?file ?fileLabel ?thumb ?fileOrig ?encoding ?creator WHERE {
-            ?file wdt:P180 wd:${value.id} .
+            ?file wdt:P180 wd:${searchValue} .
             ?file schema:contentUrl ?url .
             ?file schema:encodingFormat ?encoding .
             
             OPTIONAL { ?file p:P170/pq:P4174 ?creator . }
       
-            SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+            SERVICE wikibase:label {
+              bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
+              ?file rdfs:label ?fileLabel.
+            }
       
             bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=${isMobile ? 100 : 200}")) AS ?thumb)
             bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)))) AS ?fileOrig)
@@ -114,8 +138,15 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
       } AS %distinct_depicts
         
       WITH {
-        SELECT ?depict ?depictLabel WHERE {
+        SELECT ?depict ?depictLabel ?depictID WHERE {
           INCLUDE %distinct_depicts .
+
+          BIND(?depict as ?depictURL) .
+          service wikibase:label {
+            bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .
+            ?depictURL rdfs:label ?depictID .
+          }
+
           service <https://query.wikidata.org/sparql> {
             service wikibase:label {
               bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
@@ -150,10 +181,10 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
       // TODO: DUPLICATESSSS HERE IN DEPICTS???
       // define query that searches for subclasses as well
       sparqlQuery = `
-        SELECT DISTINCT ?item ?itemLabel ?file ?thumb ?fileOrig ?fileLabel ?encoding ?creator (GROUP_CONCAT(?depictLabel; separator = '${SEPERATOR}') AS ?depictLabels) WITH { 
+        SELECT DISTINCT ?item ?itemLabel ?file ?thumb ?fileOrig ?fileLabel ?encoding ?creator (GROUP_CONCAT(?depictID; separator = '${SEPERATOR}') AS ?depictIDs) (GROUP_CONCAT(?depictLabel; separator = '${SEPERATOR}') AS ?depictLabels) WITH { 
           SELECT ?item ?itemLabel WHERE {
             SERVICE <https://query.wikidata.org/sparql> {
-              ?item wdt:P31/wdt:P279* wd:${value.id} .
+              ?item wdt:P31/wdt:P279* wd:${searchValue} .
               SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel . }
             }
           } limit ${mediaLimit}
@@ -170,7 +201,11 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
               ?file p:P170/pq:P4174 ?creator .
             }
   
-            SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+            SERVICE wikibase:label {
+              bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
+              ?file rdfs:label ?fileLabel.
+            }
+
             bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=${isMobile ? 100 : 200}")) AS ?thumb)
             bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)))) AS ?fileOrig)
           }
@@ -196,12 +231,19 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
         } AS %distinct_depicts
           
         WITH {
-          SELECT ?depict ?depictLabel WHERE {
+          SELECT ?depict ?depictLabel ?depictID WHERE {
             INCLUDE %distinct_depicts .
+
+            BIND(?depict as ?depictURL) .
+            service wikibase:label {
+              bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .
+              ?depictURL rdfs:label ?depictID .
+            }
+
             service <https://query.wikidata.org/sparql> {
               service wikibase:label {
-                bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
-                ?depict rdfs:label ?depictLabel.
+                bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en" .
+                ?depict rdfs:label ?depictLabel .
               }
             }
           }
@@ -228,7 +270,7 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
 
     return true;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [includeSubclassSearch, value]);
+  }, [includeSubclassSearch, location]);
 
   // useEffect for input change and Wikidata search
   useEffect(() => {
