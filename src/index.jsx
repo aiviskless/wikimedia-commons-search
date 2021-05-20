@@ -9,7 +9,7 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <React.StrictMode>
     <CssBaseline />
-    <Router>
+    <Router basename="/wikimedia-commons-search">
       <App />
     </Router>
   </React.StrictMode>,

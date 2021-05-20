@@ -10,7 +10,7 @@ import {
   CircularProgress, makeStyles,
 } from '@material-ui/core';
 import { isMobile } from 'react-device-detect';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import SearchResultOption from './SearchResultOption';
 import {
   COMMONS_URL,
@@ -50,7 +50,11 @@ const useStyles = makeStyles({
   },
 });
 
-const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
+const Input = ({
+  setNoResults = () => {},
+  setEntityMediaResults = () => {},
+  setResultsLoading = () => {},
+}) => {
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState('');
@@ -60,7 +64,7 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
   const [includeSubclassSearch, setIncludeSubclassSearch] = useState(true);
   const [mediaLimit, setMediaLimit] = useState(DEFAULT_MEDIA_LIMIT);
 
-  const location = useLocation();
+  const params = useParams();
   const history = useHistory();
 
   const timer = useRef(null);
@@ -69,13 +73,20 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
 
   const handleOnValueChange = (event, newValue) => {
     setValue(newValue);
-    history.push(`?search=${newValue.id}${SEPERATOR}${newValue.label}`);
+    if (newValue?.id) history.push(`/search/${newValue.id}${SEPERATOR}${newValue.label}`);
   };
 
   // useEffect for Commons search
   useEffect(() => {
-    // e.g. search?=Q147;kitten
-    const searchValues = location.search.replace('?search=', '').split(SEPERATOR);
+    // e.g. /search/Q147;kitten
+    if (!params?.data) {
+      if (value) {
+        history.push(`/search/${value.id}${SEPERATOR}${value.label}`);
+      }
+      return false;
+    }
+
+    const searchValues = params.data.split(SEPERATOR);
 
     const searchValue = searchValues[0];
     const searchLabel = searchValues[1];
@@ -270,7 +281,7 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
 
     return true;
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [includeSubclassSearch, location]);
+  }, [includeSubclassSearch, params]);
 
   // useEffect for input change and Wikidata search
   useEffect(() => {
@@ -325,6 +336,7 @@ const Input = ({ setNoResults, setEntityMediaResults, setResultsLoading }) => {
           setInputValue(newInputValue);
         }}
         className={classes.autocomplete}
+        // eslint-disable-next-line no-shadow
         renderInput={(params) => (
           <TextField
             {...params}

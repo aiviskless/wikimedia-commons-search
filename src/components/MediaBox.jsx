@@ -11,7 +11,8 @@ import { isMobile } from 'react-device-detect';
 import ReactPlayer from 'react-player';
 import PersonIcon from '@material-ui/icons/Person';
 import { useHistory } from 'react-router';
-import { NOT_IMAGE_ENCODINGS, SEPERATOR } from '../consts';
+import { Link } from 'react-router-dom';
+import { NOT_IMAGE_ENCODINGS, NO_DEPICT_VALUES, SEPERATOR } from '../consts';
 import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
 import { wc } from './Input';
 
@@ -25,7 +26,7 @@ const formatDesc = (desc) => {
   return desc;
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     height: 'fit-content',
     margin: isMobile ? 8 : 16,
@@ -72,6 +73,16 @@ const useStyles = makeStyles({
       transform: 'translateY(-2px)',
       marginRight: 4,
     },
+
+    '& a': {
+      fontSize: 12,
+      textDecoration: 'none',
+      color: theme.palette.text.secondary,
+
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+    },
   },
 
   chipsWrapper: {
@@ -88,7 +99,7 @@ const useStyles = makeStyles({
       fontSize: isMobile ? 10 : 11,
     },
   },
-});
+}));
 
 const MediaBox = ({
   data: {
@@ -110,7 +121,7 @@ const MediaBox = ({
   const history = useHistory();
 
   const handleOnClickDepict = (label, i) => {
-    history.push(`?search=${depictIDs.value.split(SEPERATOR)[i]}${SEPERATOR}${label}`);
+    history.push(`/search/${depictIDs.value.split(SEPERATOR)[i]}${SEPERATOR}${label}`);
   };
 
   useEffect(() => {
@@ -175,7 +186,9 @@ const MediaBox = ({
 
         {depictLabels?.value && (
           <div className={classes.chipsWrapper}>
-            {Children.toArray((depictLabels.value.split(SEPERATOR)).map((label, i) => (
+            {Children.toArray((
+              depictLabels.value.split(SEPERATOR).filter((d) => d !== NO_DEPICT_VALUES)
+            ).map((label, i) => (
               <Chip
                 size="small"
                 label={label}
@@ -188,9 +201,9 @@ const MediaBox = ({
         {creator && (
           <div className={classes.creatorWrapper}>
             <PersonIcon />
-            <Typography color="textSecondary" variant="caption">
+            <Link to={`/user/${creator.value}`}>
               {`${creator.value} (${uploadCount || '?'})`}
-            </Typography>
+            </Link>
           </div>
         )}
       </CardContent>
