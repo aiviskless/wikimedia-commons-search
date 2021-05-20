@@ -5,6 +5,7 @@ export const WCQS_ENDPOINT = 'https://wcqs-beta.wmflabs.org/sparql';
 export const WDQS_ENDPOINT = 'https://query.wikidata.org/sparql';
 export const WIKIDATA_URL = 'https://www.wikidata.org';
 export const COMMONS_URL = 'https://commons.wikimedia.org/';
+export const SEPERATOR = ';';
 
 export const ALL_TAB = 0;
 export const IMAGES_TAB = 1;

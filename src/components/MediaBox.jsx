@@ -4,13 +4,13 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core';
+import { Box, Chip, makeStyles } from '@material-ui/core';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { isMobile } from 'react-device-detect';
 import ReactPlayer from 'react-player';
 import PersonIcon from '@material-ui/icons/Person';
-import { NOT_IMAGE_ENCODINGS } from '../consts';
+import { NOT_IMAGE_ENCODINGS, SEPERATOR } from '../consts';
 import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
 
 const formatTitle = (title) => {
@@ -72,11 +72,34 @@ const useStyles = makeStyles({
       marginRight: 4,
     },
   },
+
+  chipsWrapper: {
+    display: 'flex',
+    maxWidth: 'fit-content',
+    flexWrap: 'wrap',
+    margin: '4px 0',
+
+    '& > div': {
+      margin: 2,
+    },
+
+    '& span': {
+      fontSize: 11,
+    },
+  },
 });
 
 const MediaBox = ({
   data: {
-    thumb, fileLabel, file, encoding, fileOrig, itemLabel, creator, creatorUploadCount,
+    thumb,
+    fileLabel,
+    file,
+    encoding,
+    fileOrig,
+    itemLabel,
+    creator,
+    creatorUploadCount,
+    depictLabels,
   },
   onClick = () => {},
 }) => {
@@ -123,6 +146,12 @@ const MediaBox = ({
               {formatDesc(itemLabel.value)}
             </Typography>
           )}
+
+        {depictLabels?.value && (
+          <div className={classes.chipsWrapper}>
+            {depictLabels.value.split(SEPERATOR).map((label) => <Chip size="small" label={label} />)}
+          </div>
+        )}
 
         {creator && (
           <div className={classes.creatorWrapper}>
