@@ -28,7 +28,7 @@ const wd = WBK({
   sparqlEndpoint: WDQS_ENDPOINT,
 });
 
-const wc = WBK({
+export const wc = WBK({
   instance: COMMONS_URL,
   sparqlEndpoint: WCQS_ENDPOINT,
 });

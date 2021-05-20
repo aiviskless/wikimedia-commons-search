@@ -1,4 +1,4 @@
-import React, { Children } from 'react';
+import React, { Children, useEffect, useState } from 'react';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -13,6 +13,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import { useHistory } from 'react-router';
 import { NOT_IMAGE_ENCODINGS, SEPERATOR } from '../consts';
 import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
+import { wc } from './Input';
 
 const formatTitle = (title) => {
   if (title.length > 50) return `${title.substr(0, 50)}...`;
@@ -98,18 +99,37 @@ const MediaBox = ({
     fileOrig,
     itemLabel,
     creator,
-    creatorUploadCount,
     depictLabels,
     depictIDs,
   },
   onClick = () => {},
 }) => {
+  const [uploadCount, setUploadCount] = useState(0);
+
   const classes = useStyles();
   const history = useHistory();
 
   const handleOnClickDepict = (label, i) => {
     history.push(`?search=${depictIDs.value.split(SEPERATOR)[i]}${SEPERATOR}${label}`);
   };
+
+  useEffect(() => {
+    if (!creator) return false;
+
+    const sparqlQuery = `
+      SELECT (COUNT(?file) as ?count) WHERE {
+        BIND("${creator.value}" AS ?username) .
+        ?file (p:P170/pq:P4174) ?username;
+      }
+      LIMIT 99
+    `;
+
+    fetch(wc.sparqlQuery(sparqlQuery)).then((response) => response.json()).then((data) => {
+      if (data.results.bindings?.length) setUploadCount(data.results.bindings[0].count.value);
+    });
+
+    return true;
+  }, [creator]);
 
   return (
     <Card className={classes.root}>
@@ -169,7 +189,7 @@ const MediaBox = ({
           <div className={classes.creatorWrapper}>
             <PersonIcon />
             <Typography color="textSecondary" variant="caption">
-              {`${creator.value} (${creatorUploadCount?.value || '?'})`}
+              {`${creator.value} (${uploadCount || '?'})`}
             </Typography>
           </div>
         )}
