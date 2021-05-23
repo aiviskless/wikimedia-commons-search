@@ -1,6 +1,7 @@
 import React, { Children, useState } from 'react';
-import { Box, makeStyles } from '@material-ui/core';
+import { Box, IconButton, makeStyles } from '@material-ui/core';
 import { Lightbox } from 'react-modal-image';
+import BarChartIcon from '@material-ui/icons/BarChart';
 import MediaBox from './MediaBox';
 import Input from './Input';
 import MediaTypeTabs from './MediaTypeTabs';
@@ -11,6 +12,7 @@ import getFilenameExtension from '../utils/getFilenameExtension';
 import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
 import NoResults from './NoResults';
 import Loading from './Loading';
+import AnalyticsDialog from './AnalyticsDialog';
 
 const useStyles = makeStyles({
   inputWrapper: {
@@ -21,8 +23,15 @@ const useStyles = makeStyles({
     alignItems: 'center',
   },
 
-  count: {
+  resultCountWrapper: {
     marginTop: 12,
+    display: 'flex',
+    alignItems: 'center',
+
+    '& button': {
+      transform: 'translateY(-2px)',
+      marginLeft: 2,
+    },
   },
 
   wrapper: {
@@ -40,6 +49,7 @@ const Search = () => {
   const [selectedImage, setSelectedImage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState(ALL_TAB);
+  const [open, setOpen] = useState(false);
 
   const closeLightbox = () => {
     setSelectedImage(false);
@@ -82,7 +92,12 @@ const Search = () => {
         {entityMediaResults.length > 0 && (
           <div className={classes.wrapper}>
             <MediaTypeTabs setTab={setTab} tab={tab} />
-            <small className={classes.count}>{`${filteredResults.length} results`}</small>
+            <div className={classes.resultCountWrapper}>
+              <small>{`${filteredResults.length} results`}</small>
+              <IconButton size="small" onClick={() => setOpen(true)}>
+                <BarChartIcon />
+              </IconButton>
+            </div>
           </div>
         )}
       </div>
@@ -106,6 +121,12 @@ const Search = () => {
           onClose={closeLightbox}
         />
       )}
+
+      <AnalyticsDialog
+        open={open}
+        handleClose={() => setOpen(false)}
+        data={entityMediaResults}
+      />
     </>
   );
 };
