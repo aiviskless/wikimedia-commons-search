@@ -1,10 +1,11 @@
 import React, { Children, useState, useEffect } from 'react';
 import {
-  Box, makeStyles, Typography,
+  Box, makeStyles, Typography, IconButton,
 } from '@material-ui/core';
 import { Lightbox } from 'react-modal-image';
 import { useParams } from 'react-router';
 import { isMobile } from 'react-device-detect';
+import BarChartIcon from '@material-ui/icons/BarChart';
 import MediaBox from './MediaBox';
 import Input, { wc } from './Input';
 import MediaTypeTabs from './MediaTypeTabs';
@@ -22,6 +23,7 @@ import getFilenameExtension from '../utils/getFilenameExtension';
 import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
 import NoResults from './NoResults';
 import Loading from './Loading';
+import AnalyticsDialog from './AnalyticsDialog';
 
 const useStyles = makeStyles({
   inputWrapper: {
@@ -46,6 +48,17 @@ const useStyles = makeStyles({
   username: {
     marginTop: 12,
   },
+
+  resultCountWrapper: {
+    marginTop: 12,
+    display: 'flex',
+    alignItems: 'center',
+
+    '& button': {
+      transform: 'translateY(-2px)',
+      marginLeft: 2,
+    },
+  },
 });
 
 const Search = () => {
@@ -55,6 +68,7 @@ const Search = () => {
   const [selectedImage, setSelectedImage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState(ALL_TAB);
+  const [open, setOpen] = useState(false);
 
   const params = useParams();
 
@@ -181,7 +195,12 @@ const Search = () => {
           <div className={classes.wrapper}>
             <MediaTypeTabs setTab={setTab} tab={tab} />
             <Typography variant="h6" className={classes.username}>{`User:${params.data} uploads`}</Typography>
-            <small className={classes.count}>{`${filteredResults.length} results`}</small>
+            <div className={classes.resultCountWrapper}>
+              <small>{`${filteredResults.length} results`}</small>
+              <IconButton size="small" onClick={() => setOpen(true)}>
+                <BarChartIcon />
+              </IconButton>
+            </div>
           </div>
         )}
       </div>
@@ -205,6 +224,12 @@ const Search = () => {
           onClose={closeLightbox}
         />
       )}
+
+      <AnalyticsDialog
+        open={open}
+        handleClose={() => setOpen(false)}
+        data={entityMediaResults}
+      />
     </>
   );
 };

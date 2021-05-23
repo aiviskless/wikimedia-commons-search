@@ -6,7 +6,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { SEPERATOR } from '../consts';
+import { NO_DEPICT_VALUES, SEPERATOR } from '../consts';
 
 const DepictsValueTable = ({ data }) => {
   const [depictStats, setDepictStats] = useState(null);
@@ -30,7 +30,7 @@ const DepictsValueTable = ({ data }) => {
 
     // remove depicts that are mentioned just once
     Object.keys(depicts).forEach((key) => {
-      if (depicts[key] > 1) {
+      if (depicts[key] > 1 && key !== NO_DEPICT_VALUES) {
         filteredDepicts[key] = depicts[key];
       }
     });
