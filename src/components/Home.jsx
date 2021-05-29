@@ -75,6 +75,10 @@ const useStyles = makeStyles((theme) => ({
     '& small': {
       marginRight: 5,
     },
+
+    '& a': {
+      display: 'flex',
+    },
   },
 }));
 
@@ -114,8 +118,12 @@ const Home = () => {
 
       <div className={classes.footer}>
         <small>Powered by</small>
-        <img src={wd} alt="" />
-        <img src={wc} alt="" />
+        <a href={WIKIDATA_URL} target="_blank" rel="noreferrer">
+          <img src={wd} alt="" />
+        </a>
+        <a href={COMMONS_URL} target="_blank" rel="noreferrer">
+          <img src={wc} alt="" />
+        </a>
       </div>
     </div>
   );
