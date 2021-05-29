@@ -285,13 +285,13 @@ const Input = ({
 
   // useEffect for input change and Wikidata search
   useEffect(() => {
-    if (inputValue === '') {
-      setNoResults(false);
-      return undefined;
-    }
-
     if (timer.current) {
       clearTimeout(timer.current);
+    }
+
+    if (inputValue === '') {
+      setNoResults(false);
+      return false;
     }
 
     timer.current = setTimeout(() => {
@@ -306,7 +306,7 @@ const Input = ({
     }, TIMEOUT_FOR_SEARCH);
 
     return true;
-  }, [inputValue, setNoResults]);
+  }, [inputValue]);
 
   return (
     <div className={classes.root}>
