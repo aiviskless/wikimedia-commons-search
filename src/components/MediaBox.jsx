@@ -12,6 +12,7 @@ import ReactPlayer from 'react-player';
 import PersonIcon from '@material-ui/icons/Person';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
+import VisibilitySensor from 'react-visibility-sensor';
 import { NOT_IMAGE_ENCODINGS, NO_DEPICT_VALUES, SEPERATOR } from '../consts';
 import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
 import { wc } from './Input';
@@ -116,6 +117,7 @@ const MediaBox = ({
   onClick = () => {},
 }) => {
   const [uploadCount, setUploadCount] = useState(0);
+  const [visible, setVisible] = useState();
 
   const classes = useStyles();
   const history = useHistory();
@@ -124,8 +126,14 @@ const MediaBox = ({
     history.push(`/search/${depictIDs.value.split(SEPERATOR)[i]}${SEPERATOR}${label}`);
   };
 
+  const handleOnVisibilityChange = (isVisible) => {
+    if (isVisible) {
+      setVisible(true);
+    }
+  };
+
   useEffect(() => {
-    if (!creator) return false;
+    if (!creator || !visible) return false;
 
     const sparqlQuery = `
       SELECT (COUNT(?file) as ?count) WHERE {
@@ -139,51 +147,52 @@ const MediaBox = ({
     });
 
     return true;
-  }, [creator]);
+  }, [creator, visible]);
 
   return (
-    <Card className={classes.root}>
-      <div className={classes.media}>
-        {NOT_IMAGE_ENCODINGS.includes(encoding.value) ? (
-          <ReactPlayer
-            controls
-            url={fileOrig.value}
-            height={isMobile ? 94 : 169}
-            width={isMobile ? 125 : 225}
-          />
-        ) : (
-          <LazyLoadImage
-            onClick={onClick}
-            alt={file.value}
-            effect="blur"
-            src={thumb.value}
-            height={isMobile ? 94 : 169}
-            width={isMobile ? 125 : 225}
-          />
-        )}
-      </div>
+    <VisibilitySensor onChange={handleOnVisibilityChange} partialVisibility>
+      <Card className={classes.root}>
+        <div className={classes.media}>
+          {NOT_IMAGE_ENCODINGS.includes(encoding.value) ? (
+            <ReactPlayer
+              controls
+              url={fileOrig.value}
+              height={isMobile ? 94 : 169}
+              width={isMobile ? 125 : 225}
+            />
+          ) : (
+            <LazyLoadImage
+              onClick={onClick}
+              alt={file.value}
+              effect="blur"
+              src={thumb.value}
+              height={isMobile ? 94 : 169}
+              width={isMobile ? 125 : 225}
+            />
+          )}
+        </div>
 
-      <CardContent>
-        <Typography className={classes.title} gutterBottom>
-          {formatTitle(getFilenameFromWDCFilePath(fileOrig.value))}
-        </Typography>
-
-        {fileLabel?.['xml:lang'] ? (
-          <Typography
-            color="textSecondary"
-            className={classes.desc}
-          >
-            {formatDesc(fileLabel.value)}
+        <CardContent>
+          <Typography className={classes.title} gutterBottom>
+            {formatTitle(getFilenameFromWDCFilePath(fileOrig.value))}
           </Typography>
-        )
+
+          {fileLabel?.['xml:lang'] ? (
+            <Typography
+              color="textSecondary"
+              className={classes.desc}
+            >
+              {formatDesc(fileLabel.value)}
+            </Typography>
+          )
           // show Wikidata item description if file description unavailable
-          : itemLabel?.value && (
+            : itemLabel?.value && (
             <Typography color="textSecondary" className={classes.desc}>
               {formatDesc(itemLabel.value)}
             </Typography>
-          )}
+            )}
 
-        {depictLabels?.value && (
+          {depictLabels?.value && (
           <div className={classes.chipsWrapper}>
             {Children.toArray((
               depictLabels.value.split(SEPERATOR).filter((d) => d !== NO_DEPICT_VALUES)
@@ -195,29 +204,30 @@ const MediaBox = ({
               />
             )))}
           </div>
-        )}
+          )}
 
-        {creator && (
+          {creator && (
           <div className={classes.creatorWrapper}>
             <PersonIcon />
             <Link to={`/user/${creator.value}`}>
               {`${creator.value} (${uploadCount || '?'})`}
             </Link>
           </div>
-        )}
-      </CardContent>
+          )}
+        </CardContent>
 
-      <CardActions>
-        <Button
-          size="small"
-          color="primary"
-          href={file.value}
-          target="_blank"
-        >
-          Learn More
-        </Button>
-      </CardActions>
-    </Card>
+        <CardActions>
+          <Button
+            size="small"
+            color="primary"
+            href={file.value}
+            target="_blank"
+          >
+            Learn More
+          </Button>
+        </CardActions>
+      </Card>
+    </VisibilitySensor>
   );
 };
 
