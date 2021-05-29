@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/wikimedia-commons-search/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/wikimedia-commons-search/static/js/main.05f31177.chunk.js",
-    "main.js.map": "/wikimedia-commons-search/static/js/main.05f31177.chunk.js.map",
-    "runtime-main.js": "/wikimedia-commons-search/static/js/runtime-main.070b2da3.js",
-    "runtime-main.js.map": "/wikimedia-commons-search/static/js/runtime-main.070b2da3.js.map",
+    "main.js": "/wikimedia-commons-search/static/js/main.c9407db5.chunk.js",
+    "main.js.map": "/wikimedia-commons-search/static/js/main.c9407db5.chunk.js.map",
+    "runtime-main.js": "/wikimedia-commons-search/static/js/runtime-main.34e074b0.js",
+    "runtime-main.js.map": "/wikimedia-commons-search/static/js/runtime-main.34e074b0.js.map",
     "static/css/2.6ef2fac9.chunk.css": "/wikimedia-commons-search/static/css/2.6ef2fac9.chunk.css",
-    "static/js/2.39583b3e.chunk.js": "/wikimedia-commons-search/static/js/2.39583b3e.chunk.js",
-    "static/js/2.39583b3e.chunk.js.map": "/wikimedia-commons-search/static/js/2.39583b3e.chunk.js.map",
-    "static/js/3.ab039121.chunk.js": "/wikimedia-commons-search/static/js/3.ab039121.chunk.js",
-    "static/js/3.ab039121.chunk.js.map": "/wikimedia-commons-search/static/js/3.ab039121.chunk.js.map",
+    "static/js/2.0973b7c2.chunk.js": "/wikimedia-commons-search/static/js/2.0973b7c2.chunk.js",
+    "static/js/2.0973b7c2.chunk.js.map": "/wikimedia-commons-search/static/js/2.0973b7c2.chunk.js.map",
+    "static/js/3.bdcc6931.chunk.js": "/wikimedia-commons-search/static/js/3.bdcc6931.chunk.js",
+    "static/js/3.bdcc6931.chunk.js.map": "/wikimedia-commons-search/static/js/3.bdcc6931.chunk.js.map",
     "index.html": "/wikimedia-commons-search/index.html",
     "static/css/2.6ef2fac9.chunk.css.map": "/wikimedia-commons-search/static/css/2.6ef2fac9.chunk.css.map",
     "static/css/main.6dea0f05.chunk.css.map": "/wikimedia-commons-search/static/css/main.6dea0f05.chunk.css.map",
-    "static/js/2.39583b3e.chunk.js.LICENSE.txt": "/wikimedia-commons-search/static/js/2.39583b3e.chunk.js.LICENSE.txt"
+    "static/js/2.0973b7c2.chunk.js.LICENSE.txt": "/wikimedia-commons-search/static/js/2.0973b7c2.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.070b2da3.js",
+    "static/js/runtime-main.34e074b0.js",
     "static/css/2.6ef2fac9.chunk.css",
-    "static/js/2.39583b3e.chunk.js",
+    "static/js/2.0973b7c2.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.05f31177.chunk.js"
+    "static/js/main.c9407db5.chunk.js"
   ]
 }
