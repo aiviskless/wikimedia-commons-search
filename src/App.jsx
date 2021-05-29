@@ -4,7 +4,7 @@ import { isMobile } from 'react-device-detect';
 import { Redirect, Route, Switch } from 'react-router';
 import Search from './components/Search';
 import User from './components/User';
-import Input from './components/Input';
+import Home from './components/Home';
 
 const useStyles = makeStyles({
   root: {
@@ -19,14 +19,20 @@ const App = () => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <Switch>
-        <Route exact path="/" component={Input} />
-        <Route path="/search/:data" component={Search} />
-        <Route path="/user/:data" component={User} />
-        <Redirect to="/" />
-      </Switch>
-    </div>
+    <Switch>
+      <Route exact path="/" component={Home} />
+      <Route path="/search/:data">
+        <div className={classes.root}>
+          <Search />
+        </div>
+      </Route>
+      <Route path="/user/:data">
+        <div className={classes.root}>
+          <User />
+        </div>
+      </Route>
+      <Redirect to="/" />
+    </Switch>
   );
 };
 

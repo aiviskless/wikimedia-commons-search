@@ -132,7 +132,6 @@ const MediaBox = ({
         BIND("${creator.value}" AS ?username) .
         ?file (p:P170/pq:P4174) ?username;
       }
-      LIMIT 99
     `;
 
     fetch(wc.sparqlQuery(sparqlQuery)).then((response) => response.json()).then((data) => {

@@ -340,7 +340,7 @@ const Input = ({
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Search Commons..."
+            label="Enter keyword"
             variant="outlined"
             InputProps={{
               ...params.InputProps,
