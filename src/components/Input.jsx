@@ -198,7 +198,7 @@ const Input = ({
               ?item wdt:P31/wdt:P279* wd:${searchValue} .
               SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel . }
             }
-          } limit ${mediaLimit}
+          }
         } AS %Wikidataitems
   
         WITH {
@@ -219,7 +219,7 @@ const Input = ({
 
             bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)), "?width=${isMobile ? 100 : 200}")) AS ?thumb)
             bind(iri(concat("http://commons.wikimedia.org/wiki/Special:FilePath/", wikibase:decodeUri(substr(str(?url),53)))) AS ?fileOrig)
-          }
+          } limit ${mediaLimit}
         } AS %files
 
         WITH {

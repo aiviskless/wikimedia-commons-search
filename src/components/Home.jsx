@@ -108,7 +108,7 @@ const Home = () => {
               {' '}
               <Link to="/search/Q10998;potato">potato 🍠</Link>
               ,
-              <Link to="/search/Q39201;pet">pet 🐶</Link>
+              <Link to="/search/Q39201;pet">dog 🐶</Link>
               ,
               <Link to="/search/Q318;galaxy">galaxy 🌌</Link>
             </Box>
