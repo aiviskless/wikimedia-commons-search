@@ -195,7 +195,7 @@ const Input = ({
         SELECT DISTINCT ?item ?itemLabel ?file ?thumb ?fileOrig ?fileLabel ?encoding ?creator (GROUP_CONCAT(?depictID; separator = '${SEPERATOR}') AS ?depictIDs) (GROUP_CONCAT(?depictLabel; separator = '${SEPERATOR}') AS ?depictLabels) WITH { 
           SELECT ?item ?itemLabel WHERE {
             SERVICE <https://query.wikidata.org/sparql> {
-              ?item wdt:P31/wdt:P279* wd:${searchValue} .
+              ?item wdt:P279 wd:${searchValue} .
               SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel . }
             }
           }

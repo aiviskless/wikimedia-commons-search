@@ -154,12 +154,14 @@ const MediaBox = ({
       <Card className={classes.root}>
         <div className={classes.media}>
           {NOT_IMAGE_ENCODINGS.includes(encoding.value) ? (
-            <ReactPlayer
-              controls
-              url={fileOrig.value}
-              height={isMobile ? 94 : 169}
-              width={isMobile ? 125 : 225}
-            />
+            visible && (
+              <ReactPlayer
+                controls
+                url={fileOrig.value}
+                height={isMobile ? 94 : 169}
+                width={isMobile ? 125 : 225}
+              />
+            )
           ) : (
             <LazyLoadImage
               onClick={onClick}
