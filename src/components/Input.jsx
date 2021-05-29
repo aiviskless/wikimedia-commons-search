@@ -306,6 +306,7 @@ const Input = ({
     }, TIMEOUT_FOR_SEARCH);
 
     return true;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue]);
 
   return (
