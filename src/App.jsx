@@ -20,7 +20,7 @@ const App = () => {
   const classes = useStyles();
 
   return (
-    <Router basename={process.env.PUBLIC_URL}>
+    <Router basename="/">
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/search/:data">
