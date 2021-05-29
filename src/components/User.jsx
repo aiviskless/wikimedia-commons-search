@@ -185,8 +185,6 @@ const Search = () => {
 
   const filteredResults = filterResults();
 
-  console.log(entityMediaResults, 'entityMediaResults');
-
   return (
     <>
       <div className={classes.inputWrapper}>
@@ -196,10 +194,12 @@ const Search = () => {
             <MediaTypeTabs setTab={setTab} tab={tab} />
             <Typography variant="h6" className={classes.username}>{`User:${params.data} uploads`}</Typography>
             <div className={classes.resultCountWrapper}>
-              <small>{`${filteredResults.length} results`}</small>
-              <IconButton size="small" onClick={() => setOpen(true)}>
-                <BarChartIcon />
-              </IconButton>
+              <small>{`${filteredResults?.length} results`}</small>
+              {filteredResults?.length > 9 && (
+                <IconButton size="small" onClick={() => setOpen(true)}>
+                  <BarChartIcon />
+                </IconButton>
+              )}
             </div>
           </div>
         )}

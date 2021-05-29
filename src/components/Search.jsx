@@ -79,8 +79,6 @@ const Search = () => {
 
   const filteredResults = filterResults();
 
-  console.log(entityMediaResults, 'entityMediaResults');
-
   return (
     <>
       <div className={classes.inputWrapper}>
@@ -94,9 +92,11 @@ const Search = () => {
             <MediaTypeTabs setTab={setTab} tab={tab} />
             <div className={classes.resultCountWrapper}>
               <small>{`${filteredResults.length} results`}</small>
-              <IconButton size="small" onClick={() => setOpen(true)}>
-                <BarChartIcon />
-              </IconButton>
+              {filteredResults?.length > 9 && (
+                <IconButton size="small" onClick={() => setOpen(true)}>
+                  <BarChartIcon />
+                </IconButton>
+              )}
             </div>
           </div>
         )}

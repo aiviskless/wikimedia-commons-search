@@ -1,5 +1,5 @@
 export const TIMEOUT_FOR_SEARCH = 500;
-export const DEFAULT_MEDIA_LIMIT = 1000;
+export const DEFAULT_MEDIA_LIMIT = 500;
 export const MAX_MEDIA_LIMIT = 1500;
 export const WCQS_ENDPOINT = 'https://wcqs-beta.wmflabs.org/sparql';
 export const WDQS_ENDPOINT = 'https://query.wikidata.org/sparql';
