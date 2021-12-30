@@ -2,6 +2,7 @@ import { Box, makeStyles } from '@material-ui/core';
 import React from 'react';
 import { isMobile } from 'react-device-detect';
 import { Link } from 'react-router-dom';
+import GitHubIcon from '@material-ui/icons/GitHub';
 import Input from './Input';
 import wdIcon from '../assets/images/wd_ico.png';
 import wcIcon from '../assets/images/commons_ico.png';
@@ -78,6 +79,17 @@ const useStyles = makeStyles((theme) => ({
 
     '& a': {
       display: 'flex',
+      textDecoration: 'none',
+      color: 'black',
+    },
+  },
+
+  githubIconWrapper: {
+    marginRight: 16,
+    marginBottom: 2,
+
+    '& svg': {
+      fontSize: 20,
     },
   },
 }));
@@ -117,6 +129,11 @@ const Home = () => {
       </div>
 
       <div className={classes.footer}>
+        <div className={classes.githubIconWrapper}>
+          <a href="https://github.com/aiviskless/wikimedia-commons-search" target="_blank" rel="noreferrer">
+            <GitHubIcon />
+          </a>
+        </div>
         <small>Powered by</small>
         <a href={WIKIDATA_URL} target="_blank" rel="noreferrer">
           <img src={wd} alt="" />

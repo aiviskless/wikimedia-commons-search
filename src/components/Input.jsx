@@ -9,7 +9,6 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   CircularProgress, makeStyles,
 } from '@material-ui/core';
-import { isMobile } from 'react-device-detect';
 import { useHistory, useParams } from 'react-router';
 import SearchResultOption from './SearchResultOption';
 import {
