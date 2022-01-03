@@ -11,8 +11,8 @@ import {
 import getFilenameExtension from '../utils/getFilenameExtension';
 import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
 import NoResults from './NoResults';
-import Loading from './Loading';
 import AnalyticsDialog from './AnalyticsDialog';
+import MediaBoxSkeletons from './MediaBoxSkeletons';
 
 const useStyles = makeStyles({
   inputWrapper: {
@@ -48,6 +48,7 @@ const Search = () => {
   const [noResults, setNoResults] = useState(false);
   const [selectedImage, setSelectedImage] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [subsearchLoading, setSubsearchLoading] = useState(false);
   const [tab, setTab] = useState(ALL_TAB);
   const [open, setOpen] = useState(false);
 
@@ -86,12 +87,13 @@ const Search = () => {
           setNoResults={setNoResults}
           setEntityMediaResults={setEntityMediaResults}
           setResultsLoading={setLoading}
+          setSubsearchLoading={setSubsearchLoading}
         />
         {entityMediaResults.length > 0 && (
           <div className={classes.wrapper}>
             <MediaTypeTabs setTab={setTab} tab={tab} />
             <div className={classes.resultCountWrapper}>
-              <small>{`${filteredResults.length} results`}</small>
+              <small>{`${(loading || subsearchLoading) ? '...' : filteredResults.length} results`}</small>
               {filteredResults?.length > 9 && (
                 <IconButton size="small" onClick={() => setOpen(true)}>
                   <BarChartIcon />
@@ -102,7 +104,7 @@ const Search = () => {
         )}
       </div>
 
-      {loading && <Loading />}
+      {loading && <MediaBoxSkeletons />}
 
       {filteredResults.length > 0 && (
         <Box display="flex" flexWrap="wrap" justifyContent="center">

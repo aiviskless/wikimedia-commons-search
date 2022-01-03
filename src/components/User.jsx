@@ -4,7 +4,6 @@ import {
 } from '@material-ui/core';
 import { Lightbox } from 'react-modal-image';
 import { useParams } from 'react-router';
-import { isMobile } from 'react-device-detect';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import MediaBox from './MediaBox';
 import Input, { wc } from './Input';
@@ -15,16 +14,15 @@ import {
   AUDIO_TAB,
   IMAGES_TAB,
   IMAGE_FILE_EXTS,
-  NO_DEPICT_VALUES,
   VIDEO_FILE_EXTS,
   VIDEO_TAB,
 } from '../consts';
 import getFilenameExtension from '../utils/getFilenameExtension';
 import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
 import NoResults from './NoResults';
-import Loading from './Loading';
 import AnalyticsDialog from './AnalyticsDialog';
 import getUserMediaSparlq from '../utils/getUserMediaSparql';
+import MediaBoxSkeletons from './MediaBoxSkeletons';
 
 const useStyles = makeStyles({
   inputWrapper: {
@@ -142,7 +140,7 @@ const Search = () => {
         )}
       </div>
 
-      {loading && <Loading />}
+      {loading && <MediaBoxSkeletons />}
 
       {filteredResults.length > 0 && (
         <Box display="flex" flexWrap="wrap" justifyContent="center">

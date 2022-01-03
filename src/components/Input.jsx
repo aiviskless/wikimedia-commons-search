@@ -55,6 +55,7 @@ const Input = ({
   setNoResults = () => {},
   setEntityMediaResults = () => {},
   setResultsLoading = () => {},
+  setSubsearchLoading = () => {},
 }) => {
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(null);
@@ -106,6 +107,7 @@ const Input = ({
 
     setEntityMediaResults([]);
     setResultsLoading(true);
+    setSubsearchLoading(true);
     let newEntityMediaResults = [];
     let url;
 
@@ -123,6 +125,7 @@ const Input = ({
       if (!includeSubclassSearch) {
         if (newEntityMediaResults.length === 0) setNoResults(true);
         setResultsLoading(false);
+        setSubsearchLoading(false);
         return true;
       }
 
@@ -138,6 +141,7 @@ const Input = ({
         setEntityMediaResults([...newEntityMediaResults]);
         if (newEntityMediaResults.length === 0) setNoResults(true);
         setResultsLoading(false);
+        setSubsearchLoading(false);
       });
 
       return true;

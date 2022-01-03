@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import SettingsIcon from '@material-ui/icons/Settings';
 import {
-  Checkbox, FormControlLabel, IconButton, makeStyles, Popover,
+  Checkbox, FormControlLabel, IconButton, makeStyles, Popover, Tooltip, Typography,
 } from '@material-ui/core';
 import MediaLimitSlider from './MediaLimitSlider';
 
@@ -68,14 +68,31 @@ const SearchSettings = ({
         }}
       >
         <div className={classes.popoverContent}>
-          <FormControlLabel
-            value="start"
-            checked={includeSubclassSearch}
-            onChange={handleChange}
-            control={<Checkbox size="small" />}
-            label="Include subclass search"
-            labelPlacement="start"
-          />
+          <Tooltip
+            interactive
+            title={(
+              <>
+                <Typography>
+                  <a href="https://www.wikidata.org/wiki/Property:P279" target="_blank" rel="noreferrer">
+                    subclass of (P279)
+                  </a>
+                </Typography>
+                <Typography variant="body2">
+                  {/* eslint-disable-next-line max-len */}
+                  Next higher class or type; all instances of these items are instances of those items; this item is a class (subset) of that item.
+                </Typography>
+              </>
+            )}
+          >
+            <FormControlLabel
+              value="start"
+              checked={includeSubclassSearch}
+              onChange={handleChange}
+              control={<Checkbox size="small" />}
+              label="Include subclass search"
+              labelPlacement="start"
+            />
+          </Tooltip>
 
           <div className={classes.sliderWrapper}>
             <MediaLimitSlider
