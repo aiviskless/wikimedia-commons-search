@@ -2,17 +2,17 @@ import React, { Children, useState } from 'react';
 import { Box, IconButton, makeStyles } from '@material-ui/core';
 import { Lightbox } from 'react-modal-image';
 import BarChartIcon from '@material-ui/icons/BarChart';
-import MediaBox from './MediaBox';
-import Input from './Input';
-import MediaTypeTabs from './MediaTypeTabs';
+import MediaBox from '../molecules/MediaBox';
+import Input from '../organisms/Input';
+import MediaTypeTabs from '../molecules/MediaTypeTabs';
 import {
   ALL_TAB, AUDIO_FILE_EXTS, AUDIO_TAB, IMAGES_TAB, IMAGE_FILE_EXTS, VIDEO_FILE_EXTS, VIDEO_TAB,
-} from '../consts';
-import getFilenameExtension from '../utils/getFilenameExtension';
-import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
-import NoResults from './NoResults';
-import AnalyticsDialog from './AnalyticsDialog';
-import MediaBoxSkeletons from './MediaBoxSkeletons';
+} from '../../consts';
+import getFilenameExtension from '../../utils/getFilenameExtension';
+import getFilenameFromWDCFilePath from '../../utils/getFilenameFromWDCFilePath';
+import NoResults from '../atoms/NoResults';
+import AnalyticsDialog from '../organisms/AnalyticsDialog';
+import MediaBoxSkeletons from '../molecules/MediaBoxSkeletons';
 
 const useStyles = makeStyles({
   inputWrapper: {

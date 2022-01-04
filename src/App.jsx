@@ -3,9 +3,9 @@ import { makeStyles } from '@material-ui/core';
 import { isMobile } from 'react-device-detect';
 import { Redirect, Route, Switch } from 'react-router';
 import { HashRouter as Router } from 'react-router-dom';
-import Search from './components/Search';
-import User from './components/User';
-import Home from './components/Home';
+import Search from './components/pages/Search';
+import User from './components/pages/User';
+import Home from './components/pages/Home';
 
 const useStyles = makeStyles({
   root: {

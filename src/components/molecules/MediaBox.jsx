@@ -13,9 +13,9 @@ import PersonIcon from '@material-ui/icons/Person';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
-import { NOT_IMAGE_ENCODINGS, NO_DEPICT_VALUES, SEPERATOR } from '../consts';
-import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
-import { wc } from './Input';
+import { NOT_IMAGE_ENCODINGS, NO_DEPICT_VALUES, SEPERATOR } from '../../consts';
+import getFilenameFromWDCFilePath from '../../utils/getFilenameFromWDCFilePath';
+import { wc } from '../organisms/Input';
 
 const formatTitle = (title) => {
   if (title.length > 50) return `${title.substr(0, 50)}...`;

@@ -3,7 +3,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import {
   Checkbox, FormControlLabel, IconButton, makeStyles, Popover, Tooltip, Typography,
 } from '@material-ui/core';
-import MediaLimitSlider from './MediaLimitSlider';
+import MediaLimitSlider from '../molecules/MediaLimitSlider';
 
 const useStyles = makeStyles({
   popoverContent: {

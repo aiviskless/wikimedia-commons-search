@@ -10,7 +10,7 @@ import {
   CircularProgress, makeStyles,
 } from '@material-ui/core';
 import { useHistory, useParams } from 'react-router';
-import SearchResultOption from './SearchResultOption';
+import SearchResultOption from '../molecules/SearchResultOption';
 import {
   COMMONS_URL,
   DEFAULT_MEDIA_LIMIT,
@@ -19,10 +19,11 @@ import {
   WCQS_ENDPOINT,
   WDQS_ENDPOINT,
   WIKIDATA_URL,
-} from '../consts';
+} from '../../consts';
 import SearchSettings from './SearchSettings';
-import getMediaSparlq from '../utils/getMediaSparql';
-import getMediaSubclassSparlq from '../utils/getMediaSubclassSparql';
+import getMediaSparlq from '../../utils/getMediaSparql';
+import getMediaSubclassSparlq from '../../utils/getMediaSubclassSparql';
+import OutOfService from '../atoms/OutOfService';
 
 const wd = WBK({
   instance: WIKIDATA_URL,
@@ -61,6 +62,7 @@ const Input = ({
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const [inputSearchResults, setInputSearchResults] = useState([]);
+  const [outOfService, setOutOfService] = useState(false);
 
   // settings
   const [includeSubclassSearch, setIncludeSubclassSearch] = useState(true);
@@ -108,6 +110,7 @@ const Input = ({
     setEntityMediaResults([]);
     setResultsLoading(true);
     setSubsearchLoading(true);
+    setOutOfService(false);
     let newEntityMediaResults = [];
     let url;
 
@@ -142,10 +145,12 @@ const Input = ({
         if (newEntityMediaResults.length === 0) setNoResults(true);
         setResultsLoading(false);
         setSubsearchLoading(false);
-      });
+      // WC returns unreadable error messages
+      }).catch(() => { setOutOfService(true); setResultsLoading(false); });
 
       return true;
-    });
+    // WC returns unreadable error messages
+    }).catch(() => { setOutOfService(true); setResultsLoading(false); });
 
     return true;
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -223,6 +228,8 @@ const Input = ({
           />
         )}
       />
+
+      {outOfService && <div className={classes.errorWrapper}><OutOfService /></div>}
     </div>
   );
 };

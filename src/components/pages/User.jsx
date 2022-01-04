@@ -5,9 +5,9 @@ import {
 import { Lightbox } from 'react-modal-image';
 import { useParams } from 'react-router';
 import BarChartIcon from '@material-ui/icons/BarChart';
-import MediaBox from './MediaBox';
-import Input, { wc } from './Input';
-import MediaTypeTabs from './MediaTypeTabs';
+import MediaBox from '../molecules/MediaBox';
+import Input, { wc } from '../organisms/Input';
+import MediaTypeTabs from '../molecules/MediaTypeTabs';
 import {
   ALL_TAB,
   AUDIO_FILE_EXTS,
@@ -16,13 +16,13 @@ import {
   IMAGE_FILE_EXTS,
   VIDEO_FILE_EXTS,
   VIDEO_TAB,
-} from '../consts';
-import getFilenameExtension from '../utils/getFilenameExtension';
-import getFilenameFromWDCFilePath from '../utils/getFilenameFromWDCFilePath';
-import NoResults from './NoResults';
-import AnalyticsDialog from './AnalyticsDialog';
-import getUserMediaSparlq from '../utils/getUserMediaSparql';
-import MediaBoxSkeletons from './MediaBoxSkeletons';
+} from '../../consts';
+import getFilenameExtension from '../../utils/getFilenameExtension';
+import getFilenameFromWDCFilePath from '../../utils/getFilenameFromWDCFilePath';
+import NoResults from '../atoms/NoResults';
+import AnalyticsDialog from '../organisms/AnalyticsDialog';
+import getUserMediaSparlq from '../../utils/getUserMediaSparql';
+import MediaBoxSkeletons from '../molecules/MediaBoxSkeletons';
 
 const useStyles = makeStyles({
   inputWrapper: {

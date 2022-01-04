@@ -3,12 +3,12 @@ import React from 'react';
 import { isMobile } from 'react-device-detect';
 import { Link } from 'react-router-dom';
 import GitHubIcon from '@material-ui/icons/GitHub';
-import Input from './Input';
-import wdIcon from '../assets/images/wd_ico.png';
-import wcIcon from '../assets/images/commons_ico.png';
-import wd from '../assets/images/wikidata.png';
-import wc from '../assets/images/wikimedia-commons.png';
-import { WIKIDATA_URL, COMMONS_URL } from '../consts';
+import Input from '../organisms/Input';
+import wdIcon from '../../assets/images/wd_ico.png';
+import wcIcon from '../../assets/images/commons_ico.png';
+import wd from '../../assets/images/wikidata.png';
+import wc from '../../assets/images/wikimedia-commons.png';
+import { WIKIDATA_URL, COMMONS_URL } from '../../consts';
 
 const useStyles = makeStyles((theme) => ({
   root: {

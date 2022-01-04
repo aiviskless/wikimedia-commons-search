@@ -6,7 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { isMobile } from 'react-device-detect';
 import { DialogContentText, makeStyles } from '@material-ui/core';
-import DepictsValueTable from './DepictsValueTable';
+import DepictsValueTable from '../molecules/DepictsValueTable';
 
 const useStyles = makeStyles({
   title: {
