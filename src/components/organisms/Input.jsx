@@ -50,6 +50,12 @@ const useStyles = makeStyles({
   searchSettingsWrapper: {
     marginRight: 8,
   },
+
+  errorWrapper: {
+    width: 'fit-content',
+    margin: '0 auto',
+    marginTop: 16,
+  },
 });
 
 const Input = ({
@@ -74,6 +80,11 @@ const Input = ({
   const timer = useRef(null);
 
   const classes = useStyles();
+
+  const getSubclassQueryMediaLimit = (currentMediaCount, currentLimit) => {
+    if (currentMediaCount >= currentLimit) return 0;
+    return currentLimit - currentMediaCount;
+  };
 
   const handleOnValueChange = (event, newValue) => {
     setValue(newValue);
@@ -135,7 +146,9 @@ const Input = ({
       if (newEntityMediaResults.length > 0) setResultsLoading(false);
       // TODO: DUPLICATESSSS HERE IN DEPICTS???
       // define query that searches for subclasses as well
-      sparqlQuery = getMediaSubclassSparlq(mediaLimit, searchValue);
+      sparqlQuery = getMediaSubclassSparlq(
+        getSubclassQueryMediaLimit(newEntityMediaResults.length, mediaLimit), searchValue,
+      );
 
       url = wc.sparqlQuery(sparqlQuery);
       // eslint-disable-next-line no-shadow
