@@ -46,7 +46,7 @@ const useStyles = makeStyles({
     borderRadius: 8,
     zIndex: 1,
     top: 4,
-    backgroundColor: '#fafafa',
+    backgroundColor: ({ noBackground }) => (noBackground ? 'initial' : '#fafafa'),
   },
 
   autocomplete: {
@@ -69,6 +69,7 @@ const Input = ({
   setEntityMediaResults = () => {},
   setResultsLoading = () => {},
   setSubsearchLoading = () => {},
+  noBackground = false,
 }) => {
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState(null);
@@ -85,7 +86,7 @@ const Input = ({
 
   const timer = useRef(null);
 
-  const classes = useStyles();
+  const classes = useStyles({ noBackground });
 
   const getSubclassQueryMediaLimit = (currentMediaCount, currentLimit) => {
     if (currentMediaCount >= currentLimit) return 0;

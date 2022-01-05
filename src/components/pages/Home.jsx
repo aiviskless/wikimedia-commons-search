@@ -101,7 +101,7 @@ const Home = () => {
     <div className={classes.root}>
       <div className={classes.main}>
         <div className={classes.inputWrapper}>
-          <Input />
+          <Input noBackground />
         </div>
 
         <div className={classes.infoWrapper}>
