@@ -25,14 +25,6 @@ import getUserMediaSparlq from '../../utils/getUserMediaSparql';
 import MediaBoxSkeletons from '../molecules/MediaBoxSkeletons';
 
 const useStyles = makeStyles({
-  inputWrapper: {
-    marginBottom: 8,
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-
   count: {
     marginTop: 4,
   },
@@ -122,23 +114,22 @@ const Search = () => {
 
   return (
     <>
-      <div className={classes.inputWrapper}>
-        <Input />
-        {entityMediaResults.length > 0 && (
-          <div className={classes.wrapper}>
-            <MediaTypeTabs setTab={setTab} tab={tab} />
-            <Typography variant="h6" className={classes.username}>{`User:${params.data} uploads`}</Typography>
-            <div className={classes.resultCountWrapper}>
-              <small>{`${filteredResults?.length} results`}</small>
-              {filteredResults?.length > 9 && (
-                <IconButton size="small" onClick={() => setOpen(true)}>
-                  <BarChartIcon />
-                </IconButton>
-              )}
-            </div>
+      <Input />
+
+      {entityMediaResults.length > 0 && (
+        <div className={classes.wrapper}>
+          <MediaTypeTabs setTab={setTab} tab={tab} />
+          <Typography variant="h6" className={classes.username}>{`User:${params.data} uploads`}</Typography>
+          <div className={classes.resultCountWrapper}>
+            <small>{`${filteredResults?.length} results`}</small>
+            {filteredResults?.length > 9 && (
+              <IconButton size="small" onClick={() => setOpen(true)}>
+                <BarChartIcon />
+              </IconButton>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {loading && <MediaBoxSkeletons />}
 

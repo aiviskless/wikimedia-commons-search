@@ -15,14 +15,6 @@ import AnalyticsDialog from '../organisms/AnalyticsDialog';
 import MediaBoxSkeletons from '../molecules/MediaBoxSkeletons';
 
 const useStyles = makeStyles({
-  inputWrapper: {
-    marginBottom: 8,
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-
   resultCountWrapper: {
     marginTop: 12,
     display: 'flex',
@@ -82,27 +74,27 @@ const Search = () => {
 
   return (
     <>
-      <div className={classes.inputWrapper}>
-        <Input
-          setNoResults={setNoResults}
-          setEntityMediaResults={setEntityMediaResults}
-          setResultsLoading={setLoading}
-          setSubsearchLoading={setSubsearchLoading}
-        />
-        {entityMediaResults.length > 0 && (
-          <div className={classes.wrapper}>
-            <MediaTypeTabs setTab={setTab} tab={tab} />
-            <div className={classes.resultCountWrapper}>
-              <small>{`${(loading || subsearchLoading) ? '...' : filteredResults.length} results`}</small>
-              {filteredResults?.length > 9 && (
-                <IconButton size="small" onClick={() => setOpen(true)}>
-                  <BarChartIcon />
-                </IconButton>
-              )}
-            </div>
+      <Input
+        setNoResults={setNoResults}
+        setEntityMediaResults={setEntityMediaResults}
+        setResultsLoading={setLoading}
+        setSubsearchLoading={setSubsearchLoading}
+      />
+
+      {entityMediaResults.length > 0 && (
+        <div className={classes.wrapper}>
+          <MediaTypeTabs setTab={setTab} tab={tab} />
+
+          <div className={classes.resultCountWrapper}>
+            <small>{`${(loading || subsearchLoading) ? '...' : filteredResults.length} results`}</small>
+            {filteredResults?.length > 9 && (
+              <IconButton size="small" onClick={() => setOpen(true)}>
+                <BarChartIcon />
+              </IconButton>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {loading && <MediaBoxSkeletons />}
 

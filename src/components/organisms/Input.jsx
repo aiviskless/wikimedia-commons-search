@@ -41,6 +41,12 @@ const useStyles = makeStyles({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
+    position: 'sticky',
+    padding: 8,
+    borderRadius: 8,
+    zIndex: 1,
+    top: 4,
+    backgroundColor: '#fafafa',
   },
 
   autocomplete: {
@@ -212,7 +218,7 @@ const Input = ({
         options={inputSearchResults}
         renderOption={(option) => <SearchResultOption option={option} />}
         // eslint-disable-next-line no-shadow
-        getOptionSelected={(option, value) => option.title === value.title}
+        getOptionSelected={(option, value) => option?.title === value?.title}
         getOptionLabel={(option) => option.label}
         loading={loading}
         filterOptions={(x) => x}
