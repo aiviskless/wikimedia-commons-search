@@ -203,54 +203,57 @@ const Input = ({
   }, [inputValue]);
 
   return (
-    <div className={classes.root}>
-      <div className={classes.searchSettingsWrapper}>
-        <SearchSettings
-          setIncludeSubclassSearch={setIncludeSubclassSearch}
-          includeSubclassSearch={includeSubclassSearch}
-          setMediaLimit={setMediaLimit}
-          mediaLimit={mediaLimit}
+    <>
+      <div className={classes.root}>
+        <div className={classes.searchSettingsWrapper}>
+          <SearchSettings
+            setIncludeSubclassSearch={setIncludeSubclassSearch}
+            includeSubclassSearch={includeSubclassSearch}
+            setMediaLimit={setMediaLimit}
+            mediaLimit={mediaLimit}
+          />
+        </div>
+
+        <Autocomplete
+          clearOnBlur={false}
+          autoHighlight
+          options={inputSearchResults}
+          renderOption={(option) => <SearchResultOption option={option} />}
+        // eslint-disable-next-line no-shadow
+          getOptionSelected={(option, value) => option?.title === value?.title}
+          getOptionLabel={(option) => option.label}
+          loading={loading}
+          filterOptions={(x) => x}
+          value={value}
+          size="small"
+          onChange={handleOnValueChange}
+          onInputChange={(event, newInputValue) => {
+            setInputValue(newInputValue);
+          }}
+          className={classes.autocomplete}
+        // eslint-disable-next-line no-shadow
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Enter keyword"
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <>
+                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                    {inputSearchResults.length > 0 ? params.InputProps.endAdornment : null}
+                  </>
+                ),
+              }}
+            />
+          )}
         />
+
       </div>
 
-      <Autocomplete
-        clearOnBlur={false}
-        autoHighlight
-        options={inputSearchResults}
-        renderOption={(option) => <SearchResultOption option={option} />}
-        // eslint-disable-next-line no-shadow
-        getOptionSelected={(option, value) => option?.title === value?.title}
-        getOptionLabel={(option) => option.label}
-        loading={loading}
-        filterOptions={(x) => x}
-        value={value}
-        size="small"
-        onChange={handleOnValueChange}
-        onInputChange={(event, newInputValue) => {
-          setInputValue(newInputValue);
-        }}
-        className={classes.autocomplete}
-        // eslint-disable-next-line no-shadow
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Enter keyword"
-            variant="outlined"
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                  {inputSearchResults.length > 0 ? params.InputProps.endAdornment : null}
-                </>
-              ),
-            }}
-          />
-        )}
-      />
-
       {outOfService && <div className={classes.errorWrapper}><OutOfService /></div>}
-    </div>
+    </>
   );
 };
 
